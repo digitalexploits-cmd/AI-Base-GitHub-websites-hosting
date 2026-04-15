@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base³ Solutions | Industrial AI Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Indu AI Warehouse Background: Use a single, optimized image for mobile speed */
+        body { 
+            background: #0a0a0a url('https://images.unsplash.com/photo-1598114876798-2503d40e1e9c?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed; 
+            background-size: cover;
+            color: #e5e5e5; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        /* Apply a subtle, cinematic overlay for depth */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(0deg, rgba(10,10,10,0.95), rgba(10,10,10,0.6));
+            z-index: -1;
+        }
+
+        .gradient-text { background: linear-gradient(90deg, #4f46e5, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .border-base3 { border: 1px solid rgba(255,255,255,0.05); }
+
+        /* Slow, cinematic load animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 1.5s ease-out forwards; opacity: 0; }
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <nav class="p-6 flex justify-between items-center border-b border-white/10 animate-fadeIn">
+        <div class="text-2xl font-bold tracking-tighter text-white">BASE³ <span class="text-blue-500">SOLUTIONS</span></div>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest text-gray-400">
+            <a href="#" class="hover:text-white transition">Doctrine</a>
+            <a href="#" class="hover:text-white transition">Systems</a>
+            <a href="#" class="hover:text-white transition">Contact</a>
+        </div>
+    </nav>
+
+    <header class="h-[80vh] flex flex-col justify-center items-center px-6 text-center max-w-4xl mx-auto animate-fadeIn animate-delay-1">
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight">Bridging the <span class="gradient-text">Gap to Reality.</span></h1>
+        <p class="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl">Transitioning the factory floor from legacy limitations to advanced predictive maintenance through the 1728 Technical Doctrine.</p>
+        <div class="flex justify-center gap-4">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-bold transition">Explore the Doctrine</button>
+        </div>
+    </header>
+
+    <section class="py-24 px-6 relative z-10 animate-fadeIn animate-delay-2">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 text-center">
+            <div class="p-8 border-base3 rounded-2xl bg-black/40 backdrop-blur-sm">
+                <div class="text-blue-500 text-4xl mb-4 font-bold">01</div>
+                <h3 class="text-xl font-bold mb-2">THE SCOUT</h3>
+                <p class="text-gray-400 text-sm">Autonomous data auditing and gap analysis of existing industrial sensor arrays.</p>
+            </div>
+            <div class="p-8 border-base3 rounded-2xl bg-blue-900/10 backdrop-blur-sm border-blue-500/20">
+                <div class="text-blue-500 text-4xl mb-4 font-bold">02</div>
+                <h3 class="text-xl font-bold mb-2">THE EXECUTOR</h3>
+                <p class="text-gray-400 text-sm">Direct integration of Sentry/OmniVibe for real-time Electrical Signature Analysis (ESA).</p>
+            </div>
+            <div class="p-8 border-base3 rounded-2xl bg-black/40 backdrop-blur-sm">
+                <div class="text-blue-500 text-4xl mb-4 font-bold">03</div>
+                <h3 class="text-xl font-bold mb-2">THE STRATEGIST</h3>
+                <p class="text-gray-400 text-sm">High-level predictive modeling utilizing Dozenal (Base-12) data orchestration.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-6 max-w-4xl mx-auto animate-fadeIn animate-delay-2">
+        <div class="bg-black/70 border border-blue-500/30 p-6 rounded-lg font-mono text-sm shadow-xl">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-blue-400 font-bold uppercase">Base³ System Status: Operational</span>
+            </div>
+            <p class="text-gray-500 mb-2">>> Initializing 1728 Doctrine...</p>
+            <p class="text-gray-300">>> 27,000 Hours Industrial Experience Integrated.</p>
+            <p class="text-gray-300">>> Dozenal Resolution: Active.</p>
+            <p class="text-gray-300">>> Bridging Factory Floor -> Cloud Infrastructure...</p>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-gray-600 text-xs uppercase tracking-widest relative z-10">
+        &copy; 2026 AI BASE³ SOLUTIONS | St. Louis, MO
+    </footer>
+</body>
+</html>
