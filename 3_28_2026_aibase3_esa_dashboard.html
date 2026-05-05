@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Base³ ESA Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1A3A5C;--navy2:#122840;--navy3:#0d1e30;
+  --cyan:#00BFFF;--cyan2:#00a3d9;--cyan3:#007fa8;
+  --bg:#0d1e30;--surface:#142336;--surface2:#1a2d42;--surface3:#1f3550;
+  --border:#1e3a55;--border2:#255070;
+  --text:#e8f4fc;--text2:#8fb8d4;--text3:#5a8aaa;
+  --red:#e05252;--amber:#e0a030;--green:#3dcc8a;--orange:#e07a30;
+  --radius:8px;--radius2:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh}
+/* NAV */
+.topbar{background:var(--navy3);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:16px;height:52px}
+.logo{font-size:17px;font-weight:700;color:var(--cyan);letter-spacing:.5px;white-space:nowrap}
+.logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:8px}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto}
+.nav-tab{padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);border:none;background:transparent;white-space:nowrap;transition:all .15s}
+.nav-tab:hover{background:var(--surface2);color:var(--text)}
+.nav-tab.active{background:var(--navy);color:var(--cyan);border:1px solid var(--border2)}
+.status-pill{margin-left:auto;background:rgba(61,204,138,.12);border:1px solid rgba(61,204,138,.3);color:var(--green);font-size:11px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+/* LAYOUT */
+.main{padding:20px}
+.page{display:none}.page.active{display:block}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+.card-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+/* KPI */
+.kpi{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;line-height:1}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:4px}
+/* SEVERITY BADGE */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.sev-critical{background:rgba(224,82,82,.15);color:#ff7070;border:1px solid rgba(224,82,82,.3)}
+.sev-high{background:rgba(224,122,48,.15);color:#ffaa60;border:1px solid rgba(224,122,48,.3)}
+.sev-moderate{background:rgba(224,160,48,.15);color:#ffd070;border:1px solid rgba(224,160,48,.3)}
+.sev-low{background:rgba(61,204,138,.12);color:#5de8a8;border:1px solid rgba(61,204,138,.25)}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2)}
+/* FFT */
+canvas{display:block}
+.fft-wrap{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+/* PROGRESS BAR */
+.pbar-wrap{display:flex;align-items:center;gap:10px;margin:6px 0}
+.pbar-label{font-size:12px;color:var(--text2);width:120px;flex-shrink:0}
+.pbar-track{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;transition:width .4s}
+.pbar-val{font-size:12px;color:var(--text);width:44px;text-align:right;flex-shrink:0}
+/* FAULT CARD */
+.fault-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.fault-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.fault-name{font-size:14px;font-weight:600;color:var(--text)}
+.fault-detail{font-size:12px;color:var(--text3);line-height:1.5}
+.fault-metric{display:flex;gap:20px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.fm-item{display:flex;flex-direction:column;gap:2px}
+.fm-key{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.fm-val{font-size:14px;font-weight:600;color:var(--cyan)}
+/* GAUGE */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+/* WORK ORDER */
+.wo-field{margin-bottom:12px}
+.wo-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.wo-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.wo-input:focus{border-color:var(--cyan2)}
+.wo-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer}
+.wo-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:80px;outline:none}
+.wo-textarea:focus{border-color:var(--cyan2)}
+.btn{padding:8px 18px;background:var(--cyan);color:var(--navy3);border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--cyan2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+/* AGENT STATUS */
+.agent-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px}
+.agent-top{display:flex;align-items:center;gap:10px}
+.agent-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.agent-name{font-size:14px;font-weight:600}
+.agent-role{font-size:11px;color:var(--text3)}
+.agent-status{display:flex;align-items:center;gap:6px;font-size:12px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-amber{background:var(--amber)}
+.dot-red{background:var(--red)}
+.dot-idle{background:var(--text3)}
+.agent-log{font-size:11px;color:var(--text3);font-family:monospace;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:6px 8px;line-height:1.6;min-height:52px}
+/* CASE STUDY */
+.cs-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;margin-bottom:14px}
+.cs-header{background:var(--navy);padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.cs-title{font-size:15px;font-weight:600;color:var(--text)}
+.cs-body{padding:16px}
+.cs-row{display:grid;grid-template-columns:120px 1fr;gap:8px 16px;font-size:13px;margin-bottom:6px}
+.cs-key{color:var(--text3)}
+.cs-val{color:var(--text)}
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+/* SECTION HEADER */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-title{font-size:16px;font-weight:600;color:var(--text)}
+/* TIMELINE */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-item::before{content:'';position:absolute;left:-20px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg)}
+.tl-date{font-size:11px;color:var(--text3);margin-bottom:2px}
+.tl-title{font-size:13px;font-weight:600;color:var(--text)}
+.tl-desc{font-size:12px;color:var(--text3);margin-top:2px}
+/* COST TABLE */
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cost-row:last-child{border-bottom:none}
+.cost-total{display:flex;justify-content:space-between;padding:10px 0 0;font-size:15px;font-weight:700;color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">AI BASE³<span>ESA Intelligence Platform</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goPage('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="goPage('findings')">ESA Findings</button>
+    <button class="nav-tab" onclick="goPage('fft')">FFT Analyzer</button>
+    <button class="nav-tab" onclick="goPage('workorder')">Work Orders</button>
+    <button class="nav-tab" onclick="goPage('warroom')">War Room</button>
+    <button class="nav-tab" onclick="goPage('portfolio')">Portfolio</button>
+  </div>
+  <div class="status-pill">CT10x LIVE</div>
+</div>
+
+<div class="main">
+
+<!-- ───────── DASHBOARD ───────── -->
+<div id="page-dashboard" class="page active">
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="kpi"><div class="kpi-label">Assets Monitored</div><div class="kpi-val" style="color:var(--cyan)">12</div><div class="kpi-sub">MCC-connected motors</div></div>
+    <div class="kpi"><div class="kpi-label">Active Faults</div><div class="kpi-val" style="color:var(--red)">4</div><div class="kpi-sub">Require action</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Health Score</div><div class="kpi-val" style="color:var(--amber)">71%</div><div class="kpi-sub">Across fleet</div></div>
+    <div class="kpi"><div class="kpi-label">Est. Risk Value</div><div class="kpi-val" style="color:var(--text)">$94K</div><div class="kpi-sub">Avoided downtime</div></div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">Motor Fleet Health</div>
+      <div id="health-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Active Fault Summary</div>
+      <table class="tbl">
+        <thead><tr><th>Asset</th><th>Fault</th><th>Severity</th><th>Days</th></tr></thead>
+        <tbody>
+          <tr><td>P-PUMP-07</td><td>Broken Rotor Bar</td><td><span class="badge sev-critical">Critical</span></td><td>3</td></tr>
+          <tr><td>P-PUMP-07</td><td>Voltage Unbalance</td><td><span class="badge sev-high">High</span></td><td>3</td></tr>
+          <tr><td>C-CONV-02</td><td>Air Gap Eccentricity</td><td><span class="badge sev-moderate">Moderate</span></td><td>11</td></tr>
+          <tr><td>FAN-HVAC-05</td><td>Bearing Wear</td><td><span class="badge sev-low">Low</span></td><td>22</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Recent ESA Activity</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-date">Today 09:14</div><div class="tl-title">P-PUMP-07 — Rotor bar confirmed</div><div class="tl-desc">Sidebands at −26.4 dB / −27.1 dB. Work order auto-drafted.</div></div>
+        <div class="tl-item"><div class="tl-date">Yesterday 14:30</div><div class="tl-title">C-CONV-02 — Eccentricity trending</div><div class="tl-desc">Pole-pass modulation index 11.2%. Up from 8.7% last scan.</div></div>
+        <div class="tl-item"><div class="tl-date">Mar 25</div><div class="tl-title">FAN-HVAC-05 — Baseline captured</div><div class="tl-desc">120-second acquisition. All parameters nominal at this time.</div></div>
+        <div class="tl-item"><div class="tl-date">Mar 22</div><div class="tl-title">M-COMP-01 — Voltage unbalance resolved</div><div class="tl-desc">Post-correction scan confirms 0.6% unbalance. Cleared.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cost Exposure by Asset</div>
+      <canvas id="barChart" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── FINDINGS ───────── -->
+<div id="page-findings" class="page">
+  <div class="section-header">
+    <div class="section-title">ESA Fault Findings — P-PUMP-07</div>
+    <button class="btn btn-ghost" style="font-size:12px">Export PDF</button>
+  </div>
+  <div class="grid2">
+    <div class="fault-card">
+      <div class="fault-header"><div class="fault-name">Broken Rotor Bar(s)</div><span class="badge sev-critical">Critical</span></div>
+      <div class="fault-detail">Sideband pairs detected symmetrically at supply frequency ±2sFs. Lower sideband −26.4 dB, upper −27.1 dB relative to 60 Hz fundamental. Threshold for confirmed fault: above −26 dB. Both sidebands within confirmed fault region.</div>
+      <div class="fault-metric">
+        <div class="fm-item"><div class="fm-key">Lower SB</div><div class="fm-val">−26.4 dB</div></div>
+        <div class="fm-item"><div class="fm-key">Upper SB</div><div class="fm-val">−27.1 dB</div></div>
+        <div class="fm-item"><div class="fm-key">Slip</div><div class="fm-val">1.39%</div></div>
+        <div class="fm-item"><div class="fm-key">Est. Bars</div><div class="fm-val">1–2</div></div>
+      </div>
+    </div>
+    <div class="fault-card">
+      <div class="fault-header"><div class="fault-name">Air Gap Eccentricity</div><span class="badge sev-high">High</span></div>
+      <div class="fault-detail">Pole-pass frequency sidebands at Fs ± nFpp observed. Fpp = 0.417 Hz. Current amplitude modulation index 11.2% — above 8% significant threshold. Consistent with rotor sag or mechanical bearing wear at drive end.</div>
+      <div class="fault-metric">
+        <div class="fm-item"><div class="fm-key">Modulation</div><div class="fm-val">11.2%</div></div>
+        <div class="fm-item"><div class="fm-key">Fpp</div><div class="fm-val">0.417 Hz</div></div>
+        <div class="fm-item"><div class="fm-key">Type</div><div class="fm-val">Static</div></div>
+      </div>
+    </div>
+    <div class="fault-card">
+      <div class="fault-header"><div class="fault-name">Supply Voltage Unbalance</div><span class="badge sev-high">High</span></div>
+      <div class="fault-detail">NEMA MG1 method: 2.8% unbalance measured line-to-line at MCC bus. L1=268.4V, L2=261.2V, L3=270.9V. NEMA limit is 1.0%. Estimated additional winding heat rise: 18–22°C above balanced baseline. Root-cause action Priority 1.</div>
+      <div class="fault-metric">
+        <div class="fm-item"><div class="fm-key">Unbalance</div><div class="fm-val">2.8%</div></div>
+        <div class="fm-item"><div class="fm-key">NEMA Limit</div><div class="fm-val">1.0%</div></div>
+        <div class="fm-item"><div class="fm-key">Heat Rise</div><div class="fm-val">+20°C</div></div>
+      </div>
+    </div>
+    <div class="fault-card">
+      <div class="fault-header"><div class="fault-name">Rotor Slot Harmonic Elevation</div><span class="badge sev-moderate">Moderate</span></div>
+      <div class="fault-detail">RSH at 23rd order: −38.2 dB, 25th order: −36.9 dB. Healthy baseline: −45 to −55 dB. Elevation likely driven by voltage unbalance distorting rotor flux. Confirm after voltage correction with follow-up ESA scan.</div>
+      <div class="fault-metric">
+        <div class="fm-item"><div class="fm-key">23rd RSH</div><div class="fm-val">−38.2 dB</div></div>
+        <div class="fm-item"><div class="fm-key">25th RSH</div><div class="fm-val">−36.9 dB</div></div>
+        <div class="fm-item"><div class="fm-key">Baseline</div><div class="fm-val">−50 dB</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="card">
+    <div class="card-title">Phase Current Readings — Full Load</div>
+    <table class="tbl">
+      <thead><tr><th>Phase</th><th>Measured (A)</th><th>Nameplate FLA</th><th>Deviation</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td>87.2 A</td><td>89.0 A</td><td>−2.0%</td><td><span class="badge sev-low">Normal</span></td></tr>
+        <tr><td>L2</td><td>88.1 A</td><td>89.0 A</td><td>−1.0%</td><td><span class="badge sev-low">Normal</span></td></tr>
+        <tr><td>L3</td><td>86.9 A</td><td>89.0 A</td><td>−2.4%</td><td><span class="badge sev-low">Normal</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ───────── FFT ───────── -->
+<div id="page-fft" class="page">
+  <div class="section-header">
+    <div class="section-title">FFT Spectrum Analyzer — P-PUMP-07</div>
+    <div style="display:flex;gap:8px">
+      <select class="wo-select" style="width:160px" id="fftMode" onchange="drawFFT()">
+        <option value="rotor">Rotor Bar View</option>
+        <option value="full">Full Spectrum</option>
+        <option value="rsh">RSH View</option>
+      </select>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="fft-wrap"><canvas id="fftCanvas" height="260" style="width:100%"></canvas></div>
+    <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:3px;background:#00BFFF;border-radius:2px"></div><span style="font-size:11px;color:var(--text3)">Current spectrum</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:3px;background:#e05252;border-radius:2px"></div><span style="font-size:11px;color:var(--text3)">Fault sidebands</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:3px;background:#e0a030;border-radius:2px"></div><span style="font-size:11px;color:var(--text3)">RSH markers</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:3px;background:#3dcc8a;border-radius:2px;border:1px dashed #3dcc8a"></div><span style="font-size:11px;color:var(--text3)">Threshold (−30 dB)</span></div>
+    </div>
+  </div>
+  <div class="grid3">
+    <div class="card"><div class="card-title">Fundamental</div><div style="font-size:22px;font-weight:700;color:var(--cyan)">60.00 Hz</div><div style="font-size:12px;color:var(--text3);margin-top:4px">0 dB reference</div></div>
+    <div class="card"><div class="card-title">Lower Sideband</div><div style="font-size:22px;font-weight:700;color:var(--red)">58.33 Hz</div><div style="font-size:12px;color:var(--text3);margin-top:4px">−26.4 dB — FAULT</div></div>
+    <div class="card"><div class="card-title">Upper Sideband</div><div style="font-size:22px;font-weight:700;color:var(--red)">61.67 Hz</div><div style="font-size:12px;color:var(--text3);margin-top:4px">−27.1 dB — FAULT</div></div>
+  </div>
+</div>
+
+<!-- ───────── WORK ORDER ───────── -->
+<div id="page-workorder" class="page">
+  <div class="section-header">
+    <div class="section-title">Work Order Generator</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="clearWO()">Clear</button>
+      <button class="btn" onclick="generateWO()">Generate WO ↗</button>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Asset Details</div>
+      <div class="wo-field"><div class="wo-label">Work Order #</div><input class="wo-input" id="wo-num" value="WO-2026-0047"></div>
+      <div class="wo-field"><div class="wo-label">Asset Tag</div><input class="wo-input" id="wo-asset" value="P-PUMP-07"></div>
+      <div class="wo-field"><div class="wo-label">Facility</div><input class="wo-input" id="wo-facility" value="Midwest Food & Beverage Plant"></div>
+      <div class="wo-field"><div class="wo-label">Motor HP / Voltage</div><input class="wo-input" id="wo-motor" value="75 HP / 460V 3-Phase"></div>
+      <div class="wo-field"><div class="wo-label">Priority</div>
+        <select class="wo-select" id="wo-priority">
+          <option>Critical — Immediate</option><option selected>High — 7 Days</option><option>Moderate — 30 Days</option><option>Low — PM Schedule</option>
+        </select>
+      </div>
+      <div class="wo-field"><div class="wo-label">Assigned To</div><input class="wo-input" id="wo-tech" value="Anthony McGee — AI Base³ Solutions"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fault & Repair Details</div>
+      <div class="wo-field"><div class="wo-label">Primary Finding</div>
+        <select class="wo-select" id="wo-fault" onchange="updateCost()">
+          <option>Broken Rotor Bar (Confirmed)</option>
+          <option>Air Gap Eccentricity</option>
+          <option>Supply Voltage Unbalance</option>
+          <option>Stator Winding Insulation Degradation</option>
+          <option>Bearing Wear</option>
+        </select>
+      </div>
+      <div class="wo-field"><div class="wo-label">ESA Evidence</div><textarea class="wo-textarea" id="wo-evidence">Lower sideband: −26.4 dB @ 58.33 Hz. Upper sideband: −27.1 dB @ 61.67 Hz. Slip = 1.39%. Both sidebands above −26 dB confirmed fault threshold.</textarea></div>
+      <div class="wo-field"><div class="wo-label">Prescribed Action</div><textarea class="wo-textarea" id="wo-action">1. Correct voltage unbalance at MCC (Priority 1). 2. Inspect DE/NDE bearings, laser align coupling. 3. Schedule motor exchange — rotor replacement required. Rewind stator concurrent with rotor repair.</textarea></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Parts & Labor Cost Estimator</div>
+    <div class="grid3">
+      <div>
+        <div class="cost-row"><span>SKF 6313-2Z/C3 Bearing (DE)</span><span style="color:var(--text);font-weight:600">$68.40</span></div>
+        <div class="cost-row"><span>SKF 6209-2Z/C3 Bearing (NDE)</span><span style="color:var(--text);font-weight:600">$22.80</span></div>
+        <div class="cost-row"><span>Lovejoy L-099 Spider Insert</span><span style="color:var(--text);font-weight:600">$14.20</span></div>
+        <div class="cost-row"><span>Motor Exchange (75 HP TEFC)</span><span style="color:var(--text);font-weight:600">$3,200</span></div>
+        <div class="cost-total"><span>Parts Total</span><span>$3,305.40</span></div>
+      </div>
+      <div>
+        <div class="cost-row"><span>MCC voltage correction (4 hr)</span><span style="color:var(--text);font-weight:600">$340</span></div>
+        <div class="cost-row"><span>Bearing pull & align (6 hr)</span><span style="color:var(--text);font-weight:600">$510</span></div>
+        <div class="cost-row"><span>Motor swap & startup (8 hr)</span><span style="color:var(--text);font-weight:600">$680</span></div>
+        <div class="cost-row"><span>Follow-up ESA scan (2 hr)</span><span style="color:var(--text);font-weight:600">$170</span></div>
+        <div class="cost-total"><span>Labor Total</span><span>$1,700</span></div>
+      </div>
+      <div>
+        <div class="cost-row"><span>Downtime (est. 18 hrs @ $850/hr)</span><span style="color:var(--amber);font-weight:600">$15,300</span></div>
+        <div class="cost-row"><span>Catastrophic failure avoided</span><span style="color:var(--red);font-weight:600">$94,000</span></div>
+        <div class="cost-row"><span>AI Base³ ESA engagement fee</span><span style="color:var(--cyan);font-weight:600">$1,800</span></div>
+        <div class="cost-total"><span style="color:var(--green)">ROI on ESA</span><span style="color:var(--green)">52× avoided cost</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── WAR ROOM ───────── -->
+<div id="page-warroom" class="page">
+  <div class="section-header">
+    <div class="section-title">War Room — CrewAI Agent Status</div>
+    <button class="btn" onclick="cycleAgents()">Run Cycle ↗</button>
+  </div>
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="agent-card" id="agent-scout">
+      <div class="agent-top">
+        <div class="agent-icon" style="background:rgba(0,191,255,.12);font-size:20px">📡</div>
+        <div><div class="agent-name">Scout</div><div class="agent-role">Data Ingestor — CT10x / ESA edge</div></div>
+      </div>
+      <div class="agent-status"><div class="dot dot-green" id="scout-dot"></div><span id="scout-status">Monitoring — CT10x live</span></div>
+      <div class="agent-log" id="scout-log">
+> CT10x acquisition: 120s window complete<br>
+> Asset: P-PUMP-07 @ full load 87.4A avg<br>
+> Slip calculated: 1.39%<br>
+> FFT fingerprint: sidebands detected<br>
+> Handing off to Executor...
+      </div>
+    </div>
+    <div class="agent-card" id="agent-executor">
+      <div class="agent-top">
+        <div class="agent-icon" style="background:rgba(224,160,48,.12);font-size:20px">⚡</div>
+        <div><div class="agent-name">Executor</div><div class="agent-role">Technical Logic — FFT / 1728 Doctrine</div></div>
+      </div>
+      <div class="agent-status"><div class="dot dot-amber" id="executor-dot"></div><span id="executor-status">Processing — FFT analysis</span></div>
+      <div class="agent-log" id="executor-log">
+> SciPy FFT applied — 4096 point window<br>
+> Lower SB: 58.33 Hz @ −26.4 dB [FAULT]<br>
+> Upper SB: 61.67 Hz @ −27.1 dB [FAULT]<br>
+> 1728 Doctrine: 12² pattern — 2nd order fault confirmed<br>
+> RSH @ 23rd/25th elevated — voltage interaction likely<br>
+> Handing off to Strategist...
+      </div>
+    </div>
+    <div class="agent-card" id="agent-strategist">
+      <div class="agent-top">
+        <div class="agent-icon" style="background:rgba(61,204,138,.12);font-size:20px">🧠</div>
+        <div><div class="agent-name">Strategist</div><div class="agent-role">Business & Lifecycle — RUL / Action</div></div>
+      </div>
+      <div class="agent-status"><div class="dot dot-idle" id="strategist-dot"></div><span id="strategist-status">Awaiting Executor output</span></div>
+      <div class="agent-log" id="strategist-log">
+> Awaiting handoff from Executor...<br>
+> Asset history: 34,000 hrs runtime<br>
+> Last ESA: no prior record on file<br>
+> Standby for synthesis...
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">1728 Doctrine — Active Rule Set</div>
+    <div class="grid3">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px">12¹ — First Order</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.5">Single-fault isolation. One anomaly, one cause. Verify before acting.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px">
+        <div style="font-size:11px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px">12² — Second Order (ACTIVE)</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.5">Multi-fault interaction. Voltage unbalance feeding rotor bar degradation. Root-cause separation required.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px">12³ — Orchestration Layer</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.5">Fleet-wide pattern recognition. Systemic supply issue affecting multiple assets. Cross-reference C-CONV-02.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Strategist Output — Prescriptive Action</div>
+    <div id="strategist-output" style="font-size:13px;color:var(--text3);font-style:italic">Awaiting Executor handoff...</div>
+  </div>
+</div>
+
+<!-- ───────── PORTFOLIO ───────── -->
+<div id="page-portfolio" class="page">
+  <div class="section-header">
+    <div class="section-title">Case Study Portfolio — AI Base³ Solutions</div>
+    <button class="btn btn-ghost" onclick="sendPrompt('Write a new ESA case study for my AI Base³ portfolio based on a stator winding degradation finding')">Add Case Study ↗</button>
+  </div>
+  <div class="cs-card">
+    <div class="cs-header">
+      <div><div class="cs-title">Broken Rotor Bar + Multi-Fault Composite — Centrifugal Pump Motor</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Food & Beverage — March 2026</div></div>
+      <span class="badge sev-critical">Critical Intercept</span>
+    </div>
+    <div class="cs-body">
+      <div class="grid2" style="margin-bottom:14px">
+        <div>
+          <div class="cs-row"><div class="cs-key">Asset</div><div class="cs-val">75 HP Baldor M3558T — P-PUMP-07</div></div>
+          <div class="cs-row"><div class="cs-key">Drive</div><div class="cs-val">Allen-Bradley PowerFlex 753 VFD</div></div>
+          <div class="cs-row"><div class="cs-key">Load</div><div class="cs-val">CIP centrifugal pump — sugar syrup line</div></div>
+          <div class="cs-row"><div class="cs-key">Runtime</div><div class="cs-val">~34,000 hours</div></div>
+          <div class="cs-row"><div class="cs-key">Method</div><div class="cs-val">Non-invasive ESA via Milesight CT10x</div></div>
+        </div>
+        <div>
+          <div class="cs-row"><div class="cs-key">Key Finding</div><div class="cs-val">Rotor bar sidebands at −26.4 / −27.1 dB — confirmed broken bar</div></div>
+          <div class="cs-row"><div class="cs-key">Root Cause</div><div class="cs-val">2.8% voltage unbalance accelerating rotor fatigue over time</div></div>
+          <div class="cs-row"><div class="cs-key">Repair Cost</div><div class="cs-val">$5,005 parts + labor</div></div>
+          <div class="cs-row"><div class="cs-key">Avoided Cost</div><div class="cs-val">$94,000 catastrophic failure estimate</div></div>
+          <div class="cs-row"><div class="cs-key">ROI</div><div class="cs-val" style="color:var(--green)">52× return on ESA engagement</div></div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">
+        A Milesight CT10x current transformer installed at the MCC bus captured a 120-second full-load acquisition on a 75 HP pump motor with 34,000 hours of runtime in a sugar syrup CIP environment. ESA analysis revealed confirmed broken rotor bar sidebands at both lower and upper positions above the −26 dB action threshold, combined with static air gap eccentricity at 11.2% modulation index, supply voltage unbalance at 2.8% (2.8× the NEMA 1.0% limit), and elevated rotor slot harmonics at the 23rd and 25th orders. Root-cause sequencing determined the voltage unbalance to be the primary accelerant driving rotor bar fatigue — correcting it at the MCC is the first-priority action before any mechanical repair. AI Base³ delivered a prescriptive work order with OEM part numbers, labor estimates, and cost-benefit analysis within the same engagement window, entirely non-invasive, without removing a single panel cover.
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">ESA</span>
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">Rotor Bar</span>
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">Food & Beverage</span>
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">Milesight CT10x</span>
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">VFD Motor</span>
+        <span style="background:rgba(0,191,255,.1);color:var(--cyan);border:1px solid rgba(0,191,255,.25);padding:3px 10px;border-radius:20px;font-size:11px">Non-Invasive</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cs-card">
+    <div class="cs-header">
+      <div><div class="cs-title">Stator Insulation Degradation — Conveyor Drive Motor</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Food & Beverage — January 2026</div></div>
+      <span class="badge sev-high">Prevented Failure</span>
+    </div>
+    <div class="cs-body">
+      <div class="grid2" style="margin-bottom:14px">
+        <div>
+          <div class="cs-row"><div class="cs-key">Asset</div><div class="cs-val">40 HP Leeson C213T34FB — C-CONV-02</div></div>
+          <div class="cs-row"><div class="cs-key">Runtime</div><div class="cs-val">~21,000 hours</div></div>
+          <div class="cs-row"><div class="cs-key">Environment</div><div class="cs-val">Washdown zone — high humidity</div></div>
+        </div>
+        <div>
+          <div class="cs-row"><div class="cs-key">Key Finding</div><div class="cs-val">Phase-to-phase insulation resistance trending below 1 MΩ</div></div>
+          <div class="cs-row"><div class="cs-key">Avoided Cost</div><div class="cs-val">$38,000 estimated production loss + rewind</div></div>
+          <div class="cs-row"><div class="cs-key">Action Taken</div><div class="cs-val">Scheduled rewind — 6-week lead, zero unplanned downtime</div></div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">Current signature analysis identified anomalous interharmonic content in the 180–240 Hz range consistent with partial discharge activity in stator slot liners. Motor had no prior maintenance record. ESA finding triggered a PI test and Megger confirmation, revealing phase-to-phase insulation resistance at 820 kΩ — below the 1 MΩ action threshold for a motor of this frame at operating temperature. Scheduled rewind was coordinated with a planned production shutdown, eliminating unplanned downtime entirely.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='fft')setTimeout(drawFFT,50);
+  if(id==='dashboard')setTimeout(drawBarChart,50);
+}
+
+const motors=[
+  {name:'P-PUMP-07',health:34,color:'#e05252'},
+  {name:'C-CONV-02',health:61,color:'#e0a030'},
+  {name:'FAN-HVAC-05',health:78,color:'#e0d030'},
+  {name:'M-COMP-01',health:91,color:'#3dcc8a'},
+  {name:'P-PUMP-03',health:88,color:'#3dcc8a'},
+  {name:'M-MIXER-01',health:82,color:'#3dcc8a'},
+];
+const hb=document.getElementById('health-bars');
+motors.forEach(m=>{
+  hb.innerHTML+=`<div class="pbar-wrap">
+    <div class="pbar-label">${m.name}</div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:${m.health}%;background:${m.color}"></div></div>
+    <div class="pbar-val">${m.health}%</div>
+  </div>`;
+});
+
+let barChartInst=null;
+function drawBarChart(){
+  const canvas=document.getElementById('barChart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  if(barChartInst)barChartInst.destroy();
+  barChartInst=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['P-PUMP-07','C-CONV-02','FAN-HVAC-05','M-COMP-01','P-PUMP-03'],
+      datasets:[{label:'Risk Value ($K)',data:[94,38,12,0,5],backgroundColor:['#e05252aa','#e0a030aa','#e0d030aa','#3dcc8a44','#3dcc8a44'],borderColor:['#e05252','#e0a030','#e0d030','#3dcc8a','#3dcc8a'],borderWidth:1,borderRadius:4}]
+    },
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8fb8d4',font:{size:11}},grid:{color:'#1e3a55'}},y:{ticks:{color:'#8fb8d4',font:{size:11},callback:v=>'$'+v+'K'},grid:{color:'#1e3a55'}}}}
+  });
+}
+setTimeout(drawBarChart,200);
+
+function drawFFT(){
+  const canvas=document.getElementById('fftCanvas');
+  if(!canvas)return;
+  canvas.width=canvas.offsetWidth||800;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=260;
+  const mode=document.getElementById('fftMode')?.value||'rotor';
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#142336';ctx.fillRect(0,0,W,H);
+
+  const pad={l:50,r:20,t:20,b:36};
+  const pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+
+  let fMin=55,fMax=65;
+  if(mode==='full'){fMin=0;fMax=120;}
+  if(mode==='rsh'){fMin=1300;fMax=1500;}
+
+  function fx(f){return pad.l+(f-fMin)/(fMax-fMin)*pw;}
+  function fy(db){return pad.t+ph-(db/100)*ph;}
+
+  ctx.strokeStyle='#1e3a55';ctx.lineWidth=0.5;
+  for(let db=0;db<=100;db+=20){
+    const y=fy(db);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+pw,y);ctx.stroke();
+    ctx.fillStyle='#5a8aaa';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(db===0?'0dB':'-'+(100-db)+'dB',pad.l-4,y+3);
+  }
+  const nTicks=mode==='full'?7:mode==='rsh'?5:6;
+  for(let i=0;i<=nTicks;i++){
+    const f=fMin+(fMax-fMin)*i/nTicks;
+    const x=fx(f);
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();
+    ctx.fillStyle='#5a8aaa';ctx.font='10px sans-serif';ctx.textAlign='center';
+    ctx.fillText(f.toFixed(1)+'Hz',x,H-6);
+  }
+
+  ctx.strokeStyle='#3dcc8a';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  const threshY=fy(70);
+  ctx.beginPath();ctx.moveTo(pad.l,threshY);ctx.lineTo(pad.l+pw,threshY);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#3dcc8a';ctx.font='10px sans-serif';ctx.textAlign='left';
+  ctx.fillText('−30dB threshold',pad.l+4,threshY-4);
+
+  function buildSpectrum(){
+    const pts=[];
+    const step=(fMax-fMin)/800;
+    for(let f=fMin;f<=fMax;f+=step){
+      let amp=2+Math.random()*1.2;
+      if(mode==='rotor'||mode==='full'){
+        const d60=Math.abs(f-60);
+        if(d60<0.5)amp=100;
+        else if(d60<1.5)amp=90-d60*20;
+        const dLB=Math.abs(f-58.33);
+        if(dLB<0.4)amp=Math.max(amp,100-26.4-dLB*30);
+        const dUB=Math.abs(f-61.67);
+        if(dUB<0.4)amp=Math.max(amp,100-27.1-dUB*30);
+        if(mode==='full'){
+          for(let h=2;h<=5;h++){const dH=Math.abs(f-60*h);if(dH<0.8)amp=Math.max(amp,60-h*10-dH*20);}
+          const dLFpp=Math.abs(f-59.58);if(dLFpp<0.3)amp=Math.max(amp,55);
+          const dUFpp=Math.abs(f-60.42);if(dUFpp<0.3)amp=Math.max(amp,55);
+        }
+      }
+      if(mode==='rsh'){
+        const d1380=Math.abs(f-1380);if(d1380<3)amp=Math.max(amp,100-38.2-d1380*5);
+        const d1440=Math.abs(f-1440);if(d1440<3)amp=Math.max(amp,100-36.9-d1440*5);
+      }
+      pts.push({f,amp:Math.min(amp,100)});
+    }
+    return pts;
+  }
+
+  const pts=buildSpectrum();
+  ctx.strokeStyle='#00BFFF';ctx.lineWidth=1.5;ctx.beginPath();
+  pts.forEach((p,i)=>{
+    const x=fx(p.f),y=fy(p.amp);
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  if(mode==='rotor'||mode==='full'){
+    [[58.33,'−26.4dB'],[61.67,'−27.1dB']].forEach(([f,lbl])=>{
+      const x=fx(f);
+      ctx.strokeStyle='#e05252';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();
+      ctx.fillStyle='#e05252';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+      ctx.fillText(lbl,x,pad.t+12);
+    });
+    if(mode==='full'){
+      [[59.58,'Fpp-'],[60.42,'Fpp+']].forEach(([f,lbl])=>{
+        const x=fx(f);
+        ctx.strokeStyle='#e0a030';ctx.lineWidth=1;ctx.setLineDash([2,2]);
+        ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+  }
+  if(mode==='rsh'){
+    [[1380,'23rd RSH'],[1440,'25th RSH']].forEach(([f,lbl])=>{
+      const x=fx(f);
+      ctx.strokeStyle='#e0a030';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();
+      ctx.fillStyle='#e0a030';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+      ctx.fillText(lbl,x,pad.t+12);
+    });
+  }
+}
+
+let agentStep=0;
+const agentLogs=[
+  {scout:'> NEW CYCLE INITIATED\n> Acquiring 120s window on P-PUMP-07\n> CT10x lock confirmed — 87.4A avg\n> Slip detection: calculating...\n> Passing FFT fingerprint to Executor',
+   executor:'> Receiving signal from Scout...\n> Running SciPy FFT — 4096 point\n> Analyzing sideband pairs at Fs±2sFs\n> 1728 Doctrine: 12² pattern match\n> Standby for full analysis...',
+   strategist:'> Awaiting Executor output...\n> Pre-loading asset history 34,000 hrs\n> Cross-referencing C-CONV-02 voltage data\n> Pre-staging work order template...',
+   output:'Awaiting Executor handoff...'},
+  {scout:'> Acquisition complete — all phases captured\n> L1: 87.2A | L2: 88.1A | L3: 86.9A\n> Voltage readings: 268.4 / 261.2 / 270.9V\n> Unbalance flag: 2.8% — HIGH\n> Handoff to Executor: COMPLETE',
+   executor:'> Lower SB: 58.33 Hz @ −26.4 dB ⚠ FAULT\n> Upper SB: 61.67 Hz @ −27.1 dB ⚠ FAULT\n> RSH 23rd: −38.2 dB | 25th: −36.9 dB\n> Eccentricity modulation: 11.2%\n> 1728 Doctrine 12² confirmed — multi-fault\n> Handoff to Strategist: COMPLETE',
+   strategist:'> Fault matrix received from Executor\n> Primary driver: voltage unbalance 2.8%\n> Arrhenius +18°C heat rise on windings\n> RUL estimate: 6–18 weeks without action\n> Drafting prescriptive work order...',
+   output:'Awaiting synthesis...'},
+  {scout:'> Standby — monitoring mode\n> Next acquisition: scheduled in 24 hrs\n> Alert threshold armed: ±0.5 dB change\n> All CT10x channels nominal',
+   executor:'> Analysis archived to case study log\n> P-PUMP-07 signature stored in baseline DB\n> Cross-fleet pattern: voltage unbalance\n> C-CONV-02 flagged for same root cause check',
+   strategist:'> PRESCRIPTIVE OUTPUT READY\n> Priority 1: Correct MCC voltage unbalance\n> Priority 2: Bearing inspection + alignment\n> Priority 3: Motor exchange — 7-day window\n> Estimated avoided loss: $94,000\n> ROI on ESA engagement: 52×\n> Work order drafted. Awaiting "WORD" confirmation.',
+   output:'✓ SYNTHESIS COMPLETE — Priority 1: Correct 2.8% voltage unbalance at MCC (this week). Priority 2: Bearing pull, shaft runout check, laser alignment. Priority 3: Motor exchange with concurrent stator rewind. Estimated repair cost: $5,005. Avoided catastrophic failure value: $94,000. ROI: 52×. Work order drafted — awaiting analyst confirmation.'}
+];
+
+function cycleAgents(){
+  agentStep=(agentStep+1)%agentLogs.length;
+  const s=agentLogs[agentStep];
+  document.getElementById('scout-log').innerHTML=s.scout.replace(/\n/g,'<br>');
+  document.getElementById('executor-log').innerHTML=s.executor.replace(/\n/g,'<br>');
+  document.getElementById('strategist-log').innerHTML=s.strategist.replace(/\n/g,'<br>');
+  document.getElementById('strategist-output').innerHTML=s.output;
+  document.getElementById('strategist-output').style.color=agentStep===2?'#3dcc8a':'#5a8aaa';
+  document.getElementById('strategist-output').style.fontStyle=agentStep===2?'normal':'italic';
+  const dots=['scout-dot','executor-dot','strategist-dot'];
+  const states=[['dot-green','dot-amber','dot-idle'],['dot-green','dot-green','dot-amber'],['dot-idle','dot-idle','dot-green']];
+  dots.forEach((d,i)=>{
+    const el=document.getElementById(d);
+    el.className='dot '+states[agentStep][i];
+  });
+}
+
+function generateWO(){
+  const num=document.getElementById('wo-num').value;
+  const asset=document.getElementById('wo-asset').value;
+  const fault=document.getElementById('wo-fault').value;
+  const priority=document.getElementById('wo-priority').value;
+  const tech=document.getElementById('wo-tech').value;
+  const evidence=document.getElementById('wo-evidence').value;
+  const action=document.getElementById('wo-action').value;
+  sendPrompt(`Generate a detailed ESA work order document for AI Base³ portfolio:\nWork Order: ${num}\nAsset: ${asset}\nFault: ${fault}\nPriority: ${priority}\nAnalyst: ${tech}\nESA Evidence: ${evidence}\nPrescribed Action: ${action}\n\nInclude OEM part numbers with Grainger pricing, labor hours, downtime cost estimate, and format as a professional case study suitable for my AI Base³ portfolio targeting plant managers and reliability engineers.`);
+}
+function clearWO(){
+  ['wo-num','wo-asset','wo-facility','wo-motor','wo-tech','wo-evidence','wo-action'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+}
+</script>
+</body>
+</html>
