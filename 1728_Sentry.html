@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1728 SENTRY - MASTER TERMINAL</title>
+    <style>
+        body { background: #000; color: #00ff41; font-family: 'Courier New', Courier, monospace; overflow: hidden; margin: 0; }
+        #header { padding: 10px; border-bottom: 2px solid #00ff41; background: #001a00; font-weight: bold; }
+        #dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px; height: 30vh; }
+        .module { border: 1px solid #00ff41; padding: 10px; background: rgba(0, 255, 65, 0.05); }
+        #viz-container { height: 60vh; width: 100vw; background: #000; position: relative; }
+        .alert { color: #ff0000; font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0;} 100% {opacity: 1;} }
+    </style>
+</head>
+<body>
+    <div id="header">1728 DOCTRINE // NODE_LG_ALPHA // STATUS: INGESTING</div>
+    
+    <div id="dashboard">
+        <div class="module">
+            <div>MAGNETIC FLUX (µT)</div>
+            <div id="mag-data">X: 0.00 | Y: 0.00 | Z: 0.00</div>
+            <div id="mag-wobble">STABILITY: NOMINAL</div>
+        </div>
+        <div class="module">
+            <div>ACOUSTIC ENERGY</div>
+            <div id="audio-peak">PEAK: -Infinity dB</div>
+            <div id="harmonics">HARMONIC RATIO: 1.000</div>
+        </div>
+    </div>
+
+    <div id="viz-container">
+        <canvas id="scope"></canvas>
+    </div>
+
+    <script>
+        const magData = document.getElementById('mag-data');
+        const magWobble = document.getElementById('mag-wobble');
+        const audioPeak = document.getElementById('audio-peak');
+        const canvas = document.getElementById('scope');
+        const ctx = canvas.getContext('2d');
+
+        // 1. MAGNETIC INFERENCE (THE WOBBLE)
+        if ('Magnetometer' in window) {
+            try {
+                const mag = new Magnetometer({frequency: 60});
+                let lastZ = 0;
+                mag.addEventListener('reading', () => {
+                    magData.innerHTML = `X: ${mag.x.toFixed(2)} | Y: ${mag.y.toFixed(2)} | Z: ${mag.z.toFixed(2)}`;
+                    
+                    // 1728 Scrutiny: Detect Rotor Bar/Winding "Hitch"
+                    const deltaZ = Math.abs(mag.z - lastZ);
+                    if (deltaZ > 5.0) {
+                        magWobble.innerHTML = `<span class="alert">WOBBLE DETECTED: ${deltaZ.toFixed(2)}</span>`;
+                    } else {
+                        magWobble.innerText = "STABILITY: NOMINAL";
+                    }
+                    lastZ = mag.z;
+                });
+                mag.start();
+            } catch (e) { magWobble.innerText = "ERR: ENABLE GENERIC SENSORS IN CHROME://FLAGS"; }
+        }
+
+        // 2. 1728 ACOUSTIC FFT (THE HISS)
+        async function initAudio() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyzer = audioCtx.createAnalyser();
+            analyzer.fftSize = 4096; // 1728 Precision Slice
+            source.connect(analyzer);
+
+            const bufferLength = analyzer.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function draw() {
+                requestAnimationFrame(draw);
+                analyzer.getByteFrequencyData(dataArray);
+                
+                // Render the 3D "Architecture" (2D Spectrum Visualization)
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight * 0.6;
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let x = 0;
+
+                for(let i = 0; i < bufferLength; i++) {
+                    const barHeight = dataArray[i];
+                    ctx.fillStyle = `rgb(0, ${barHeight + 100}, 65)`;
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+                
+                // Track Peak Energy
+                const max = Math.max(...dataArray);
+                audioPeak.innerText = `PEAK ENERGY: ${max} (1728 VAL)`;
+            }
+            draw();
+        }
+
+        // Initialize on tap
+        window.addEventListener('click', () => {
+            initAudio();
+            document.getElementById('header').innerText += " // KERNEL_ENGAGED";
+        });
+    </script>
+</body>
+</html>
