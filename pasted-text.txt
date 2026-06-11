@@ -78,62 +78,6 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:3rem 2
 .footer-status{display:flex;align-items:center;gap:0.4rem}
 .status-dot{width:5px;height:5px;background:#22d3a5;border-radius:50%;box-shadow:0 0 6px #22d3a5;animation:blink 2s step-end infinite}
 @media(max-width:600px){nav{padding:1rem 1.25rem}.hero{padding:0 1.25rem 5rem}.stat-bar{padding:1.25rem}.section{padding:4rem 1.25rem}.process-section{padding:4rem 1.25rem}.process-steps::before{display:none}.cta-band{padding:5rem 1.25rem}footer{padding:2.5rem 1.25rem 1.5rem}.footer-inner{flex-direction:column}}
-
-/* Professional polish for scrolling certificate carousel in Founder Dossier */
-#dos-track,
-div[style*="min-width:100%"][style*="padding:24px"] {
-  background: linear-gradient(145deg, rgba(6,14,28,0.96) 0%, rgba(4,12,24,0.99) 100%) !important;
-  border: 1px solid rgba(0,212,255,0.2) !important;
-  box-shadow: 
-    0 14px 45px rgba(0,0,0,0.55),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.35) !important;
-  border-radius: 8px;
-  margin: 0 6px;
-  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-div[style*="min-width:100%"][style*="padding:24px"]:hover {
-  transform: translateY(-3px);
-  box-shadow: 
-    0 22px 60px rgba(0,0,0,0.65),
-    inset 0 1px 0 rgba(255,255,255,0.1) !important;
-}
-
-div[style*="min-width:100%"][style*="padding:24px"] > div[style*="display:grid"] {
-  gap: 20px !important;
-}
-
-/* Nicer typography inside the cert cards */
-div[style*="min-width:100%"][style*="padding:24px"] > div > div[style*="font-family:'Exo 2'"] {
-  font-size: 17.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  margin-bottom: 7px !important;
-}
-
-div[style*="min-width:100%"][style*="padding:24px"] div[style*="font-family:'Share Tech Mono'"] {
-  letter-spacing: 0.32em !important;
-}
-
-/* Better carousel navigation dots */
-#dos-dots > div {
-  width: 8px !important;
-  height: 8px !important;
-  margin: 0 6px !important;
-  background: #3a5a72;
-  box-shadow: 0 0 8px rgba(0,212,255,0.25);
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0,212,255,0.3);
-}
-
-#dos-dots > div[style*="background:#00d4ff"],
-#dos-dots > div:hover {
-  background: #00d4ff !important;
-  border-color: #00eeff;
-  box-shadow: 0 0 12px rgba(0,212,255,0.6);
-  transform: scale(1.15);
-}
 </style>
 </head>
 <body data-new-gr-c-s-check-loaded="14.1138.0" data-gr-ext-installed="">
