@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Base³ Solutions | Industrial AI Infrastructure</title>
+<meta name="description" content="Bridging the gap between legacy factory floor maintenance and predictive AI infrastructure. SINE~WaiV — no new hardware required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#08101f;
+  --navy2:#0d1a30;
+  --navy3:#111e38;
+  --cyan:#00D4FF;
+  --cyan2:#00E5FF;
+  --green:#22d3a5;
+  --gold:#f5c842;
+  --white:#F0F4FF;
+  --muted:#7a90b0;
+  --border:rgba(0,212,255,0.15);
+  --nav-w:220px;
+  --section-h:100vh;
+}
+html{scroll-behavior:smooth;height:100%}
+body{
+  font-family:'Exo 2',sans-serif;
+  background:var(--navy);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── LEFT NAV RAIL ── */
+.nav-rail{
+  position:fixed;top:0;left:0;bottom:0;
+  width:var(--nav-w);
+  background:rgba(8,16,31,0.96);
+  border-right:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  z-index:100;
+  display:flex;flex-direction:column;
+  padding:0;
+}
+.nav-logo{
+  padding:28px 24px 24px;
+  border-bottom:1px solid var(--border);
+}
+.nav-logo .wordmark{
+  font-family:'Exo 2',sans-serif;
+  font-weight:900;font-size:1.1rem;
+  letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--white);line-height:1;
+}
+.nav-logo .wordmark sup{color:var(--cyan);font-size:0.55em;vertical-align:super}
+.nav-logo .tagline{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.28em;
+  color:var(--muted);text-transform:uppercase;
+  margin-top:5px;
+}
+.nav-links{
+  flex:1;padding:20px 0;
+  display:flex;flex-direction:column;gap:2px;
+  overflow-y:auto;
+}
+.nav-link{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 24px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.62rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--muted);
+  text-decoration:none;
+  border-left:2px solid transparent;
+  transition:all 0.2s;cursor:pointer;
+  background:none;border-top:none;border-right:none;border-bottom:none;
+  width:100%;text-align:left;
+}
+.nav-link:hover,.nav-link.active{
+  color:var(--cyan);
+  border-left-color:var(--cyan);
+  background:rgba(0,212,255,0.05);
+}
+.nav-link .dot{
+  width:5px;height:5px;border-radius:50%;
+  background:currentColor;flex-shrink:0;
+  opacity:0.5;
+}
+.nav-link:hover .dot,.nav-link.active .dot{opacity:1;box-shadow:0 0 8px var(--cyan)}
+.nav-bottom{
+  padding:20px 24px;
+  border-top:1px solid var(--border);
+}
+.nav-cta{
+  display:block;width:100%;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  border:1px solid var(--border);
+  padding:10px 14px;text-align:center;
+  text-decoration:none;
+  transition:all 0.25s;
+}
+.nav-cta:hover{background:var(--cyan);color:var(--navy)}
+.nav-status{
+  display:flex;align-items:center;gap:7px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.5rem;letter-spacing:0.2em;
+  color:var(--muted);text-transform:uppercase;
+  margin-top:12px;
+}
+.status-dot{width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);animation:blink 2s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ── MAIN CONTENT ── */
+.main{margin-left:var(--nav-w)}
+
+/* ── SECTIONS ── */
+.section{
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ── HERO ── */
+#hero{
+  background-image:url('https://static.wixstatic.com/media/f7b8d1_abb74176326e4704abf048b102aba997~mv2.png?originWidth=1920&originHeight=1024');
+  background-size:cover;background-position:center 40%;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(6,12,24,0.55) 0%,rgba(8,16,31,0.4) 50%,rgba(6,12,24,0.7) 100%);
+}
+.hero-overlay::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,212,255,0.01) 3px,rgba(0,212,255,0.01) 4px);
+  pointer-events:none;
+}
+#spark-canvas{position:absolute;inset:0;z-index:1;pointer-events:none}
+.hero-content{
+  position:relative;z-index:2;
+  height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 5vw 5rem;
+  max-width:900px;
+  animation:fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.sys-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.62rem;letter-spacing:0.3em;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:0.6rem;
+}
+.sys-tag::before{
+  content:'';display:inline-block;width:6px;height:6px;
+  background:var(--cyan);border-radius:50%;
+  box-shadow:0 0 8px var(--cyan);animation:blink 1.4s step-end infinite;
+}
+.hero-title{
+  font-family:'Exo 2',sans-serif;font-weight:900;
+  font-size:clamp(3rem,8vw,6.5rem);
+  line-height:0.92;text-transform:uppercase;
+  letter-spacing:-0.01em;margin-bottom:1.5rem;
+}
+.hero-title .accent{color:var(--cyan)}
+.hero-sub{
+  font-size:clamp(1rem,1.6vw,1.2rem);font-weight:300;
+  color:rgba(240,244,255,0.78);max-width:560px;
+  line-height:1.65;margin-bottom:2.5rem;
+}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{
+  font-family:'Share Tech Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--navy);background:var(--cyan);
+  padding:0.9rem 2rem;text-decoration:none;font-weight:700;
+  transition:all 0.2s;box-shadow:0 0 24px rgba(0,212,255,0.35);
+}
+.btn-primary:hover{background:var(--cyan2);box-shadow:0 0 40px rgba(0,212,255,0.6)}
+.btn-ghost{
+  font-family:'Share Tech Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid var(--border);
+  padding:0.9rem 2rem;text-decoration:none;
+  transition:all 0.2s;
+}
+.btn-ghost:hover{border-color:var(--cyan);background:rgba(0,212,255,0.07)}
+
+/* ── STAT BAR ── */
+.stat-bar{
+  background:rgba(11,18,34,0.95);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:1.6rem 4vw;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:1rem;
+}
+.stat-item{text-align:center}
+.stat-value{font-family:'Share Tech Mono',monospace;font-size:1.7rem;color:var(--cyan);line-height:1;margin-bottom:0.35rem}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:0.52rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase}
+
+/* ── TECHNOLOGY SECTION ── */
+#technology{
+  background:var(--navy2);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:100vh;
+}
+.tech-left{
+  padding:5rem 4vw;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.tech-right{
+  padding:5rem 4vw;
+  display:flex;flex-direction:column;justify-content:center;
+  gap:1.5rem;
+}
+.section-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.3em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:1rem;
+}
+.section-title{
+  font-family:'Exo 2',sans-serif;font-weight:900;
+  font-size:clamp(2rem,3.5vw,3rem);
+  text-transform:uppercase;letter-spacing:-0.01em;
+  margin-bottom:1.5rem;line-height:1.05;
+}
+.section-body{
+  font-size:0.95rem;color:rgba(240,244,255,0.72);
+  line-height:1.75;font-weight:300;max-width:520px;
+}
+.tech-metric{
+  background:rgba(0,212,255,0.04);
+  border:1px solid var(--border);
+  padding:1.5rem 1.75rem;
+  display:grid;grid-template-columns:auto 1fr;gap:1.25rem;align-items:center;
+}
+.tech-metric-val{
+  font-family:'Share Tech Mono',monospace;
+  font-size:1.8rem;color:var(--cyan);line-height:1;
+}
+.tech-metric-label{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.tech-metric-label strong{display:block;color:var(--white);font-size:0.9rem;margin-bottom:3px}
+.kill-zones{
+  background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  padding:1.25rem 1.5rem;margin-top:1rem;
+}
+.kill-zones .kz-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.55rem;letter-spacing:0.25em;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:0.75rem;
+}
+.kz-bands{display:flex;gap:1rem;flex-wrap:wrap}
+.kz-band{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;color:rgba(0,212,255,0.7);
+  border:1px solid rgba(0,212,255,0.2);
+  padding:4px 10px;
+}
+
+/* ── SERVICES ── */
+#services{
+  background:var(--navy);
+  min-height:100vh;
+  padding:5rem 4vw;
+}
+.services-header{
+  display:grid;grid-template-columns:1fr 2fr;
+  gap:3rem;align-items:end;margin-bottom:3rem;
+}
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+}
+.service-card{
+  background:var(--navy2);padding:2.5rem 2rem;
+  position:relative;overflow:hidden;
+  transition:background 0.25s;
+}
+.service-card::before{
+  content:'';position:absolute;top:0;left:0;
+  width:3px;height:0;background:var(--cyan);
+  transition:height 0.35s ease;
+}
+.service-card:hover{background:var(--navy3)}
+.service-card:hover::before{height:100%}
+.service-icon{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.58rem;color:var(--cyan);
+  letter-spacing:0.2em;margin-bottom:1rem;opacity:0.8;
+}
+.service-name{
+  font-family:'Exo 2',sans-serif;font-weight:700;
+  font-size:1rem;text-transform:uppercase;
+  letter-spacing:0.04em;margin-bottom:0.75rem;
+}
+.service-desc{font-size:0.85rem;color:var(--muted);line-height:1.65;font-weight:300}
+
+/* ── FOUNDER / DOSSIER ── */
+#founder{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+}
+.founder-photo{
+  position:relative;overflow:hidden;
+}
+.founder-photo img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center 20%;
+  display:block;
+}
+.founder-photo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to right,transparent 50%,var(--navy2) 100%),
+             linear-gradient(to top,rgba(8,16,31,0.85) 0%,transparent 40%);
+}
+.founder-badge{
+  position:absolute;bottom:2.5rem;left:2.5rem;z-index:2;
+}
+.founder-badge .pulse-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.55rem;letter-spacing:0.28em;
+  color:var(--cyan);text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.founder-badge .pulse-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 12px var(--cyan);
+}
+.founder-badge h2{
+  font-family:'Exo 2',sans-serif;font-weight:900;
+  font-size:1.8rem;letter-spacing:-0.02em;line-height:1.05;
+}
+.founder-badge .sub{font-size:0.82rem;color:rgba(240,244,255,0.6);margin-top:4px}
+.founder-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.founder-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.12em;
+  padding:5px 12px;border-radius:2px;
+  border:1px solid rgba(0,212,255,0.3);
+  background:rgba(0,212,255,0.08);color:var(--cyan);
+}
+.founder-tag.green{
+  border-color:rgba(34,211,165,0.3);
+  background:rgba(34,211,165,0.08);color:var(--green);
+}
+.founder-tag.gold{
+  border-color:rgba(245,200,66,0.3);
+  background:rgba(245,200,66,0.08);color:var(--gold);
+}
+.founder-info{
+  background:var(--navy2);
+  padding:4rem 3vw;
+  display:flex;flex-direction:column;justify-content:center;
+  border-left:1px solid var(--border);
+}
+.id-grid{display:flex;flex-direction:column;gap:0;margin-top:1.5rem}
+.id-row{
+  display:grid;grid-template-columns:130px 1fr;
+  gap:1rem;padding:12px 0;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.id-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.2em;
+  color:var(--muted);text-transform:uppercase;
+  padding-top:2px;
+}
+.id-val{font-size:0.85rem;font-weight:600;color:var(--white);line-height:1.4}
+.id-val.mono{font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:0.75rem}
+.founder-bio{
+  margin-top:1.5rem;padding:1.25rem 1.5rem;
+  border-left:2px solid var(--cyan);
+  background:rgba(0,212,255,0.04);
+  font-size:0.85rem;color:rgba(240,244,255,0.75);
+  line-height:1.75;font-weight:300;
+}
+
+/* ── CERT WALL ── */
+#credentials{
+  min-height:100vh;
+  background:var(--navy);
+  padding:4rem 3vw 5rem;
+}
+.cred-header{
+  display:grid;grid-template-columns:1fr 2fr;
+  gap:2rem;align-items:end;
+  margin-bottom:3rem;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--border);
+}
+.cred-count{
+  font-family:'Share Tech Mono',monospace;
+  font-size:3.5rem;color:var(--cyan);line-height:1;
+}
+.cred-count span{font-size:0.6rem;letter-spacing:0.2em;color:var(--muted);display:block;margin-top:4px}
+
+/* The wall itself — dark panel with warm overhead lighting effect */
+.cert-wall{
+  position:relative;
+  background:linear-gradient(180deg,#0a0f1c 0%,#0d1525 100%);
+  border:1px solid var(--border);
+  padding:3rem 2.5rem 2.5rem;
+  overflow:hidden;
+}
+/* Ceiling light bar */
+.cert-wall::before{
+  content:'';
+  position:absolute;top:0;left:10%;right:10%;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(245,200,66,0.6),rgba(255,255,255,0.8),rgba(245,200,66,0.6),transparent);
+  box-shadow:0 0 40px 8px rgba(245,200,66,0.25),0 0 80px 20px rgba(245,200,66,0.1);
+}
+.cert-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:18px;
+}
+.cert-frame{
+  position:relative;
+  background:linear-gradient(180deg,#f8f6f0,#ede9e0);
+  border:8px solid #1a1208;
+  box-shadow:
+    0 -8px 20px rgba(245,200,66,0.18),
+    0 -4px 10px rgba(255,240,180,0.12),
+    0 4px 16px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  padding:10px 8px 8px;
+  transition:transform 0.2s,box-shadow 0.2s;
+  cursor:default;
+}
+.cert-frame:hover{
+  transform:translateY(-3px);
+  box-shadow:
+    0 -12px 28px rgba(245,200,66,0.28),
+    0 -6px 14px rgba(255,240,180,0.18),
+    0 8px 24px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+/* Individual spot light */
+.cert-frame::before{
+  content:'';
+  position:absolute;
+  top:-24px;left:50%;transform:translateX(-50%);
+  width:60px;height:24px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(245,200,66,0.5),transparent 80%);
+  pointer-events:none;
+}
+.cert-mat{
+  background:linear-gradient(180deg,#fdfbf7,#f5f2eb);
+  border:1px solid rgba(0,0,0,0.08);
+  padding:8px 6px 6px;
+  min-height:100px;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.cert-issuer-bar{
+  display:flex;align-items:center;gap:5px;
+  margin-bottom:5px;
+}
+.cert-issuer-logo{
+  font-size:0.55rem;font-weight:900;
+  letter-spacing:0.05em;
+  padding:2px 4px;
+  border-radius:2px;
+  flex-shrink:0;
+}
+.logo-google{background:#4285F4;color:#fff}
+.logo-gcloud{background:#34A853;color:#fff}
+.logo-coursiv{background:#6B21A8;color:#fff}
+.logo-ebmi{background:#92400E;color:#fff}
+.logo-anthropic{background:#D97706;color:#fff}
+.logo-linkedin{background:#0077B5;color:#fff}
+.cert-issuer-name{font-size:0.48rem;color:#666;font-weight:600;letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cert-title{
+  font-size:0.58rem;font-weight:700;color:#1a1a2e;
+  line-height:1.25;flex:1;
+  margin-bottom:4px;
+}
+.cert-date{
+  font-size:0.45rem;color:#999;
+  font-family:'Share Tech Mono',monospace;
+  letter-spacing:0.08em;text-transform:uppercase;
+  border-top:1px solid rgba(0,0,0,0.08);
+  padding-top:4px;margin-top:auto;
+}
+.cert-seal{
+  position:absolute;bottom:6px;right:6px;
+  width:18px;height:18px;
+  border-radius:50%;
+  border:1px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;
+  opacity:0.5;
+}
+
+/* Platform section headers */
+.cert-platform-label{
+  grid-column:1/-1;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.28em;
+  color:var(--muted);text-transform:uppercase;
+  padding:8px 0 4px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:4px;
+}
+
+/* ── CONTACT ── */
+#contact{
+  min-height:60vh;
+  background:var(--navy2);
+  border-top:1px solid var(--border);
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:center;
+}
+.contact-panel{
+  padding:4rem 3vw;
+  border-right:1px solid var(--border);
+}
+.contact-panel:last-child{border-right:none}
+.contact-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.55rem;letter-spacing:0.3em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:1rem;
+}
+.contact-panel h3{
+  font-family:'Exo 2',sans-serif;font-weight:900;
+  font-size:1.5rem;text-transform:uppercase;
+  letter-spacing:-0.01em;margin-bottom:1rem;
+}
+.contact-panel p,.contact-panel a{
+  font-size:0.88rem;color:var(--muted);
+  line-height:1.8;display:block;text-decoration:none;
+}
+.contact-panel a:hover{color:var(--cyan)}
+.footer-bar{
+  background:var(--navy);
+  border-top:1px solid var(--border);
+  padding:1.25rem 4vw;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.footer-copy{font-family:'Share Tech Mono',monospace;font-size:0.52rem;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
+
+/* ── SCROLL SNAP optional ── */
+@media(min-width:1200px){
+  .main{scroll-snap-type:y mandatory;height:100vh;overflow-y:scroll}
+  .section{scroll-snap-align:start}
+  #credentials,#contact{scroll-snap-align:start}
+}
+
+/* Mobile fallback */
+@media(max-width:900px){
+  .nav-rail{display:none}
+  .main{margin-left:0}
+  #technology,#founder,#contact{grid-template-columns:1fr}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .services-header{grid-template-columns:1fr}
+  .cred-header{grid-template-columns:1fr}
+  .cert-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .stat-bar{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LEFT NAV RAIL ── -->
+<nav class="nav-rail" aria-label="Site navigation">
+  <div class="nav-logo">
+    <div class="wordmark">AI BASE<sup>3</sup></div>
+    <div class="tagline">Industrial AI Infrastructure</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="scrollTo('hero')"><span class="dot"></span>Home</button>
+    <button class="nav-link" onclick="scrollTo('technology')"><span class="dot"></span>SINE~WaiV</button>
+    <button class="nav-link" onclick="scrollTo('services')"><span class="dot"></span>Services</button>
+    <button class="nav-link" onclick="scrollTo('founder')"><span class="dot"></span>Founder</button>
+    <button class="nav-link" onclick="scrollTo('credentials')"><span class="dot"></span>Credentials</button>
+    <button class="nav-link" onclick="scrollTo('contact')"><span class="dot"></span>Contact</button>
+  </div>
+  <div class="nav-bottom">
+    <a href="mailto:anthony@aibase3.com" class="nav-cta">Request Audit →</a>
+    <div class="nav-status"><span class="status-dot"></span>Systems Active</div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main" id="main-scroll">
+
+  <!-- HERO -->
+  <section class="section" id="hero">
+    <div class="hero-overlay"></div>
+    <canvas id="spark-canvas"></canvas>
+    <div class="hero-content">
+      <p class="sys-tag">SYS.INIT // INDUSTRIAL AI INFRASTRUCTURE</p>
+      <h1 class="hero-title">AI BASE<span class="accent"><sup>3</sup></span><br>SOLUTIONS</h1>
+      <p class="hero-sub">Bridging the gap between legacy factory floor maintenance and predictive AI infrastructure. No new hardware. No downtime. No guesswork.</p>
+      <div class="hero-actions">
+        <a href="mailto:anthony@aibase3.com" class="btn-primary">Request Infrastructure Audit →</a>
+        <button class="btn-ghost" onclick="scrollTo('technology')">Explore SINE~WaiV</button>
+      </div>
+    </div>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-value">27K+</div><div class="stat-label">Field Hours</div></div>
+      <div class="stat-item"><div class="stat-value">65K</div><div class="stat-label">FFT Resolution</div></div>
+      <div class="stat-item"><div class="stat-value">21.6×</div><div class="stat-label">Lead Time Gain</div></div>
+      <div class="stat-item"><div class="stat-value">46</div><div class="stat-label">Credentials</div></div>
+      <div class="stat-item"><div class="stat-value">NSF</div><div class="stat-label">SBIR Applicant</div></div>
+    </div>
+  </section>
+
+  <!-- TECHNOLOGY -->
+  <section class="section" id="technology">
+    <div class="tech-left">
+      <div class="section-tag">// Core Technology</div>
+      <h2 class="section-title">SINE~WaiV™<br>Signal Engine</h2>
+      <p class="section-body">A current-domain virtual sensing framework that treats existing motor electrical infrastructure as the observability layer for mechanical degradation intelligence. The conductor becomes the diagnostic substrate — no sensors attached, no production stoppage, no PLC integration required.</p>
+      <p class="section-body" style="margin-top:1rem">SINE~WaiV reads current already traveling through the VFD. The wire you already own becomes the sensor you never had to install.</p>
+      <div class="kill-zones" style="margin-top:2rem">
+        <div class="kz-title">// VFD Kill Zones — Empirically Validated</div>
+        <div class="kz-bands">
+          <span class="kz-band">170–185 Hz</span>
+          <span class="kz-band">258–260 Hz</span>
+          <span class="kz-band">1728-pt Mixed-Radix FFT</span>
+          <span class="kz-band">28 Sub-Window Sizes</span>
+        </div>
+      </div>
+    </div>
+    <div class="tech-right">
+      <div class="tech-metric">
+        <div class="tech-metric-val">12.1<br>–16.4</div>
+        <div class="tech-metric-label"><strong>dB SNR Gain</strong>Preliminary internal benchmark — Paderborn KAt current-domain validation</div>
+      </div>
+      <div class="tech-metric">
+        <div class="tech-metric-val">21.6×</div>
+        <div class="tech-metric-label"><strong>Lead Time Improvement</strong>134.4 hrs vs 6.2 hrs baseline — NASA IMS temporal proxy benchmark</div>
+      </div>
+      <div class="tech-metric">
+        <div class="tech-metric-val">≤40</div>
+        <div class="tech-metric-label"><strong>mW Compute Target</strong>Edge-class deployment — no cloud dependency required</div>
+      </div>
+      <div class="tech-metric">
+        <div class="tech-metric-val">TRL 4</div>
+        <div class="tech-metric-label"><strong>Technology Readiness</strong>NSF SBIR Phase I — Ref #00113162 — Under Review</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="services-header">
+      <div>
+        <div class="section-tag">// What We Do</div>
+        <h2 class="section-title">Industrial AI<br>Services</h2>
+      </div>
+      <p class="section-body">From field-level diagnostics to AI infrastructure deployment — built by a licensed electrician with 27,000+ hours on the floor, not a software company guessing at motor behavior.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">[ 01 ] // ESA</div>
+        <div class="service-name">Motor Current Signature Analysis</div>
+        <div class="service-desc">Fault detection through existing electrical infrastructure. Broken rotor bars, bearing degradation, air-gap eccentricity — identified without attached sensors or production interruption.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">[ 02 ] // PREDICTIVE</div>
+        <div class="service-name">Predictive Maintenance Infrastructure</div>
+        <div class="service-desc">Nexus platform deployment — 65,536-point FFT engine, six fault classifiers, Motor Intelligence Reports, and Work Order generation. Wire-as-Sensor architecture.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">[ 03 ] // AUDIT</div>
+        <div class="service-name">Electrical Infrastructure Audit</div>
+        <div class="service-desc">Licensed industrial electrician assessment across food & beverage, chemical, mining, and university infrastructure. 27K+ documented field hours. MO/IL EBMI Credentialed.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">[ 04 ] // AI</div>
+        <div class="service-name">AI Integration Consulting</div>
+        <div class="service-desc">Bridging the gap between legacy SCADA systems and modern AI observability layers. Practical deployment without ripping out existing infrastructure.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">[ 05 ] // DSP</div>
+        <div class="service-name">Signal Processing Architecture</div>
+        <div class="service-desc">PASS — Panoramic Adaptive Spectral Steering. Mixed-radix FFT bin architecture purpose-built for VFD-contaminated environments. Patent pending.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">[ 06 ] // INTEL</div>
+        <div class="service-name">Motor Intelligence Reports</div>
+        <div class="service-desc">Actionable maintenance intelligence delivered as structured reports with fault confidence scores, recommended interventions, and work order generation.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER DOSSIER -->
+  <section class="section" id="founder">
+    <div class="founder-photo">
+      <img src="founder-office.jpg" alt="Anthony L. McGee — Founder AI Base³ LLC — St. Louis Missouri">
+      <div class="founder-photo-overlay"></div>
+      <div class="founder-badge">
+        <div class="pulse-label"><span class="pulse-dot"></span>Founder &amp; Chief Engineer</div>
+        <h2>Anthony L. McGee</h2>
+        <div class="sub">AI Base³ LLC · St. Louis, Missouri</div>
+        <div class="founder-tags">
+          <span class="founder-tag">EBMI Credentialed</span>
+          <span class="founder-tag green">NSF SBIR Applicant</span>
+          <span class="founder-tag gold">27K+ Field Hours</span>
+        </div>
+      </div>
+    </div>
+    <div class="founder-info">
+      <div class="section-tag">// Founder Dossier</div>
+      <h2 class="section-title" style="font-size:clamp(1.5rem,2.5vw,2.2rem)">Anthony Lee McGee</h2>
+      <div class="founder-bio">
+        27,000+ documented field hours on industrial electrical infrastructure across food &amp; beverage, mining, chemical manufacturing, and university systems. Founded AI Base³ LLC to apply physics-based signal processing to the problem legacy maintenance has never solved cleanly: detecting motor faults before failure, without new hardware, without PLC integration, without production stoppage.
+      </div>
+      <div class="id-grid">
+        <div class="id-row"><span class="id-label">Entity</span><span class="id-val">AI Base³ LLC — Missouri Charter LC014726944</span></div>
+        <div class="id-row"><span class="id-label">EIN</span><span class="id-val mono">42-2737209</span></div>
+        <div class="id-row"><span class="id-label">SAM.gov UEI</span><span class="id-val mono">K8E5DCCSS833</span></div>
+        <div class="id-row"><span class="id-label">CAGE</span><span class="id-val mono">217X3</span></div>
+        <div class="id-row"><span class="id-label">EBMI License</span><span class="id-val mono">WBAKC8C59CC437226</span></div>
+        <div class="id-row"><span class="id-label">Jurisdiction</span><span class="id-val">Missouri / Illinois</span></div>
+        <div class="id-row"><span class="id-label">Patent</span><span class="id-val">Provisional filed May 27, 2026 — Mixed-Radix FFT Bin Architecture</span></div>
+        <div class="id-row"><span class="id-label">NSF Ref</span><span class="id-val mono">#00113162 — SBIR Phase I — Under Review</span></div>
+        <div class="id-row"><span class="id-label">Contact</span><span class="id-val"><a href="mailto:anthony@aibase3.com" style="color:var(--cyan);text-decoration:none">anthony@aibase3.com</a> · 314-461-2547</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CREDENTIALS WALL -->
+  <section class="section" id="credentials">
+    <div class="cred-header">
+      <div>
+        <div class="section-tag">// Credential Stack</div>
+        <div class="cred-count">46<span>Verified Credentials</span></div>
+      </div>
+      <p class="section-body">Professional certifications across AI, machine learning, signal processing, cloud infrastructure, and industrial electrical systems — accumulated across Coursera, Coursiv, and EBMI. Every credential earned, every title accurate.</p>
+    </div>
+
+    <div class="cert-wall">
+      <div class="cert-grid">
+
+        <!-- PLATFORM LABEL: EBMI -->
+        <div class="cert-platform-label">EBMI — Electrical Business Management Institute</div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-ebmi">EBMI</span><span class="cert-issuer-name">Electrical Business Management Institute</span></div>
+            <div class="cert-title">Credentialed Electrical Professional</div>
+            <div class="cert-date">License WBAKC8C59CC437226 · MO/IL · Exp 2033</div>
+            <div class="cert-seal" style="color:#92400E">★</div>
+          </div>
+        </div>
+
+        <!-- PLATFORM LABEL: COURSERA SPECIALIZATIONS -->
+        <div class="cert-platform-label">Coursera — Specializations (Google / Google Cloud)</div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Generative AI Leader Professional Certificate</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Introduction to Generative AI Learning Path Specialization</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Google AI Professional Certificate</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Google Prompting Essentials Specialization</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <!-- PLATFORM LABEL: COURSERA COURSES -->
+        <div class="cert-platform-label">Coursera — Courses (Google / Google Cloud / Anthropic)</div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Foundations of User Experience (UX) Design</div>
+            <div class="cert-date">Completed June 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-anthropic">A</span><span class="cert-issuer-name">Anthropic / AWiT</span></div>
+            <div class="cert-title">AI Fundamentals with Claude</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#D97706">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Gen AI Agents: Transform Your Organization</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Gen AI Apps: Transform Your Work</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Gen AI: Navigate the Landscape</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Gen AI: Unlock Foundational Concepts</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Gen AI: Beyond the Chatbot</div>
+            <div class="cert-date">Completed May 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Uncover Your Transferable Skills with AI</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Responsible AI: Applying AI Principles with Google Cloud</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Introduction to Responsible AI</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Introduction to Large Language Models</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-gcloud">GCP</span><span class="cert-issuer-name">Google Cloud</span></div>
+            <div class="cert-title">Introduction to Generative AI</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#34A853">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for App Building</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for Data Analysis</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for Content Creation</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for Writing and Communicating</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for Research and Insights</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI for Brainstorming and Planning</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">AI Fundamentals</div>
+            <div class="cert-date">Completed April 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Use AI as a Creative or Expert Partner</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Speed Up Data Analysis and Presentation Building</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Design Prompts for Everyday Work Tasks</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Start Writing Prompts like a Pro</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-google">G</span><span class="cert-issuer-name">Google</span></div>
+            <div class="cert-title">Google AI Essentials</div>
+            <div class="cert-date">Completed January 2026</div>
+            <div class="cert-seal" style="color:#4285F4">✓</div>
+          </div>
+        </div>
+
+        <!-- PLATFORM LABEL: COURSIV -->
+        <div class="cert-platform-label">Coursiv — AI Tools &amp; Applications</div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Turbocharge Your Productivity with AI</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Perplexity</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">ChatGPT</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">ChatGPT: Deep Dive</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">AI for Accountants</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">AI for Business Operations</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Boost Your Sales with AI</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Stable Diffusion</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Claude</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">AI for Product Development</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Midjourney</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Lovable</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">AI Essentials for Project Managers</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Jasper AI</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Marketing Your Business with AI</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">AI Social Influence &amp; Blogging</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+        <div class="cert-frame">
+          <div class="cert-mat">
+            <div class="cert-issuer-bar"><span class="cert-issuer-logo logo-coursiv">Cv</span><span class="cert-issuer-name">Coursiv</span></div>
+            <div class="cert-title">Gemini</div>
+            <div class="cert-date">Coursiv · 2026</div>
+            <div class="cert-seal" style="color:#6B21A8">✓</div>
+          </div>
+        </div>
+
+      </div><!-- /cert-grid -->
+    </div><!-- /cert-wall -->
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-panel">
+      <div class="contact-label">// Organization</div>
+      <h3>AI Base³<br>LLC</h3>
+      <p>Missouri Charter LC014726944<br>EIN: 42-2737209<br>SAM.gov Active through May 29, 2027<br>UEI: K8E5DCCSS833 · CAGE: 217X3</p>
+    </div>
+    <div class="contact-panel">
+      <div class="contact-label">// Contact</div>
+      <h3>Anthony L.<br>McGee</h3>
+      <a href="mailto:anthony@aibase3.com">anthony@aibase3.com</a>
+      <a href="tel:3144612547">314-461-2547</a>
+      <a href="https://aibase3.com">www.aibase3.com</a>
+      <p style="margin-top:0.75rem">622 De Merville Ave<br>Saint Louis, MO 63125</p>
+    </div>
+    <div class="contact-panel">
+      <div class="contact-label">// Ready to Deploy</div>
+      <h3>Request an<br>Audit</h3>
+      <p>Industrial electrical infrastructure assessment, ESA baseline, or Nexus platform deployment. MO/IL licensed. Available for on-site evaluation.</p>
+      <a href="mailto:anthony@aibase3.com" class="btn-primary" style="display:inline-block;margin-top:1.5rem;font-size:0.62rem">Schedule Now →</a>
+    </div>
+  </section>
+
+  <div class="footer-bar">
+    <span class="footer-copy">© 2026 AI Base³ LLC · Saint Louis, Missouri · SINE~WaiV™ Patent Pending</span>
+    <span class="footer-copy" style="display:flex;align-items:center;gap:8px"><span class="status-dot"></span>Systems Active</span>
+  </div>
+
+</main>
+
+<script>
+// Smooth scroll for nav
+function scrollTo(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const main = document.getElementById('main-scroll');
+  if(main && main.style.overflowY === 'scroll'){
+    main.scrollTo({top:el.offsetTop,behavior:'smooth'});
+  } else {
+    el.scrollIntoView({behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+// Active nav on scroll
+const sections = ['hero','technology','services','founder','credentials','contact'];
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+      const idx = sections.indexOf(e.target.id);
+      if(idx>=0) document.querySelectorAll('.nav-link')[idx].classList.add('active');
+    }
+  });
+},{threshold:0.4});
+sections.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});
+
+// Spark canvas
+const canvas = document.getElementById('spark-canvas');
+const ctx = canvas.getContext('2d');
+let sparks=[];
+function resize(){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight}
+resize();window.addEventListener('resize',resize);
+function mkSpark(){return{x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.4,vy:-Math.random()*0.6-0.1,life:1,r:Math.random()*1.5+0.5}}
+function loop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(Math.random()<0.3)sparks.push(mkSpark());
+  sparks=sparks.filter(s=>{
+    s.x+=s.vx;s.y+=s.vy;s.life-=0.008;
+    ctx.globalAlpha=s.life*0.7;
+    ctx.fillStyle='#00D4FF';
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+    return s.life>0;
+  });
+  ctx.globalAlpha=1;
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
