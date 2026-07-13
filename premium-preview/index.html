@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Base³ Nexus Platform</title>
+<meta name="description" content="AI Base³ Nexus industrial intelligence platform for electrical signature analysis, motor diagnostics, fleet monitoring and reporting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#071019;--panel:#0c1722;--panel2:#101d2a;--line:rgba(255,255,255,.08);--text:#edf4f8;--muted:#8ea0ad;--blue:#4ca7d9;--gold:#c7a96b;--green:#67c99b;--shadow:0 22px 60px rgba(0,0,0,.32);--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(76,167,217,.09),transparent 30%),linear-gradient(180deg,#071019 0%,#09131d 100%);color:var(--text);font-family:Inter,system-ui,sans-serif;min-height:100vh}a{color:inherit}.shell{max-width:1440px;margin:auto;padding:0 28px 42px}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:14px}.mark{width:40px;height:40px;border:1px solid rgba(199,169,107,.55);display:grid;place-items:center;border-radius:10px;background:linear-gradient(145deg,rgba(199,169,107,.13),rgba(76,167,217,.06));font:700 13px Manrope;color:var(--gold)}.brand h1{font:700 15px Manrope;margin:0;letter-spacing:.06em}.brand p{margin:3px 0 0;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 16px rgba(103,201,155,.5)}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;padding:54px 0 30px}.hero-copy,.system-card{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(16,29,42,.92),rgba(9,20,30,.92));box-shadow:var(--shadow)}.hero-copy{padding:44px}.kicker{color:var(--gold);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:18px}.hero h2{font:700 clamp(34px,5vw,64px) Manrope;margin:0 0 18px;line-height:1.02;max-width:780px}.hero h2 span{color:var(--blue)}.hero p{margin:0;color:var(--muted);font-size:16px;line-height:1.75;max-width:760px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;text-decoration:none;font-weight:600;font-size:13px;border:1px solid var(--line);background:#122131}.btn.primary{background:linear-gradient(180deg,#2c6f96,#235b7a);border-color:rgba(76,167,217,.55)}.btn.secondary{background:transparent}
+.system-card{padding:28px;display:flex;flex-direction:column;justify-content:space-between}.system-card h3{font:600 16px Manrope;margin:0 0 20px}.metric-list{display:grid;gap:14px}.metric{padding:15px 0;border-bottom:1px solid var(--line)}.metric:last-child{border-bottom:0}.metric strong{display:block;font:600 24px Manrope}.metric span{color:var(--muted);font-size:12px}.system-note{margin-top:24px;padding:14px;border:1px solid rgba(103,201,155,.2);background:rgba(103,201,155,.05);border-radius:12px;color:#b9dcca;font-size:12px;line-height:1.5}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:22px 0 18px}.section-head h3{margin:0;font:600 22px Manrope}.section-head p{margin:0;color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.module{grid-column:span 4;min-height:220px;border:1px solid var(--line);border-radius:16px;padding:24px;text-decoration:none;background:linear-gradient(180deg,rgba(15,28,40,.96),rgba(10,20,29,.96));position:relative;overflow:hidden;transition:.22s ease;display:flex;flex-direction:column}.module.large{grid-column:span 6}.module:hover{transform:translateY(-3px);border-color:rgba(76,167,217,.35);box-shadow:0 18px 44px rgba(0,0,0,.28)}.module:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),var(--blue));opacity:.8}.icon{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-weight:700;margin-bottom:24px;background:rgba(255,255,255,.025)}.module h4{font:600 17px Manrope;margin:0 0 9px}.module p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.module footer{margin-top:auto;padding-top:22px;display:flex;align-items:center;justify-content:space-between;color:#b8c5cd;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.arrow{color:var(--blue);font-size:18px}.muted-module{opacity:.58}.muted-module footer{color:var(--gold)}
+.bottom{margin-top:24px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:22px 0 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.bottom a{text-decoration:none;color:#cbd7dd}
+@media(max-width:980px){.hero{grid-template-columns:1fr}.module,.module.large{grid-column:span 6}}@media(max-width:640px){.shell{padding:0 16px 28px}header{height:auto;padding:16px 0;gap:14px}.status{display:none}.hero{padding-top:28px}.hero-copy{padding:28px}.module,.module.large{grid-column:1/-1}.section-head{align-items:start;gap:8px;flex-direction:column}.bottom{grid-template-columns:1fr}.hero h2{font-size:38px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="brand"><div class="mark">AB³</div><div><h1>AI Base³ Solutions</h1><p>Nexus Industrial Intelligence Platform</p></div></div>
+  <div class="status"><span class="dot"></span><span>Public demonstration environment</span></div>
+</header>
+<section class="hero">
+  <div class="hero-copy">
+    <div class="kicker">Industrial intelligence, organized</div>
+    <h2>One coherent platform for <span>machine insight.</span></h2>
+    <p>Nexus brings electrical signature analysis, motor diagnostics, fleet visibility, reports, and executive evaluation into a single premium operating environment.</p>
+    <div class="hero-actions"><a class="btn primary" href="../aibase3_nexus.html">Open Nexus</a><a class="btn secondary" href="../dossier.html">View Executive Dossier</a></div>
+  </div>
+  <aside class="system-card">
+    <div><h3>Platform scope</h3><div class="metric-list"><div class="metric"><strong>ESA</strong><span>Electrical signature analysis</span></div><div class="metric"><strong>Fleet</strong><span>Asset-level operational visibility</span></div><div class="metric"><strong>Reports</strong><span>Decision-ready motor intelligence</span></div></div></div>
+    <div class="system-note">Demonstration modules are clearly separated from production-connected functions.</div>
+  </aside>
+</section>
+<div class="section-head"><div><h3>Platform modules</h3><p>Consistent navigation across the Nexus environment</p></div><p>Version 1.0 premium shell</p></div>
+<main class="grid">
+  <a class="module large" href="../aibase3_nexus.html"><div class="icon">NX</div><h4>Nexus ESA Platform</h4><p>The primary platform environment for signal inspection, diagnostics, trend interpretation, and technical evaluation.</p><footer><span>Core platform</span><span class="arrow">→</span></footer></a>
+  <a class="module large" href="../aibase3_esa_engine_v3_1.html"><div class="icon">EA</div><h4>ESA Diagnostic Engine</h4><p>Focused diagnostic workspace for motor-current analysis, spectral review, and fault-classification workflows.</p><footer><span>Diagnostic module</span><span class="arrow">→</span></footer></a>
+  <a class="module" href="../dashboard.html"><div class="icon">DB</div><h4>Operations Dashboard</h4><p>Consolidated asset condition, alert visibility, and maintenance prioritization.</p><footer><span>Existing module</span><span class="arrow">→</span></footer></a>
+  <a class="module" href="../motor_reports.html"><div class="icon">MR</div><h4>Motor Intelligence Reports</h4><p>Structured technical findings and decision-ready operational reporting.</p><footer><span>Existing module</span><span class="arrow">→</span></footer></a>
+  <a class="module" href="../1728_Sentry.html"><div class="icon">17</div><h4>1728 Sentry</h4><p>Specialized monitoring and inspection environment within the broader Nexus platform.</p><footer><span>Monitoring module</span><span class="arrow">→</span></footer></a>
+  <a class="module" href="../dossier.html"><div class="icon">EX</div><h4>Executive Dossier</h4><p>Business, technical, and evaluation context for decision-makers and prospective partners.</p><footer><span>Executive view</span><span class="arrow">→</span></footer></a>
+  <div class="module muted-module"><div class="icon">PQ</div><h4>Power Quality</h4><p>Dedicated power-quality workspace to be created after capability overlap with the ESA engine is verified.</p><footer><span>Planned</span><span class="arrow">•</span></footer></div>
+  <div class="module muted-module"><div class="icon">FL</div><h4>Fleet Intelligence</h4><p>Cross-asset portfolio view to be created from verified dashboard and reporting components.</p><footer><span>Planned</span><span class="arrow">•</span></footer></div>
+</main>
+<div class="bottom"><span>AI Base³ Solutions LLC · St. Louis, Missouri</span><span><a href="mailto:digital.exploits@gmail.com">Contact</a></span></div>
+</div>
+</body>
+</html>
