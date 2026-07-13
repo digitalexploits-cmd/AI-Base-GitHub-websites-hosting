@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — AI Base³ Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;600;700;800;900&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:       #020810;
+  --deep:       #040D1A;
+  --glass:      rgba(6,18,38,0.55);
+  --glass-lt:   rgba(10,30,60,0.4);
+  --glass-bd:   rgba(0,180,255,0.12);
+  --glass-bd2:  rgba(0,180,255,0.06);
+  --cyan:       #00D4FF;
+  --cyan2:      #00EEFF;
+  --cyan-dim:   rgba(0,212,255,0.15);
+  --cyan-glow:  rgba(0,212,255,0.08);
+  --blue:       #0066FF;
+  --blue2:      #004DCC;
+  --electric:   #00F5FF;
+  --green:      #00FFB3;
+  --amber:      #FFB020;
+  --red:        #FF3B5C;
+  --white:      #E8F4FF;
+  --muted:      rgba(100,160,200,0.5);
+  --muted2:     rgba(100,160,200,0.25);
+  --exo:        'Exo 2', sans-serif;
+  --mono:       'Share Tech Mono', monospace;
+  --cond:       'Barlow Condensed', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--void);color:var(--white);font-family:var(--exo);min-height:100vh;overflow-x:hidden}
+
+/* PARTICLE BACKGROUND */
+#particle-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* SCAN LINE OVERLAY */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.018) 3px,rgba(0,0,0,0.018) 6px);pointer-events:none;z-index:1;animation:scanroll 8s linear infinite}
+@keyframes scanroll{from{background-position:0 0}to{background-position:0 100px}}
+
+/* GLASSMORPHISM CORE */
+.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(1.8);-webkit-backdrop-filter:blur(18px) saturate(1.8);border:1px solid var(--glass-bd);border-radius:12px;position:relative;overflow:hidden}
+.glass::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.04) 0%,transparent 60%,rgba(0,100,255,0.03) 100%);pointer-events:none;border-radius:inherit}
+.glass-lt{background:var(--glass-lt);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-bd2);border-radius:8px;position:relative}
+.glass-lt::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.03) 0%,transparent 70%);pointer-events:none;border-radius:inherit}
+
+/* GLOW EFFECTS */
+.glow-cyan{box-shadow:0 0 30px rgba(0,212,255,0.12),0 0 60px rgba(0,212,255,0.06),inset 0 1px 0 rgba(0,212,255,0.15)}
+.glow-blue{box-shadow:0 0 30px rgba(0,100,255,0.1),inset 0 1px 0 rgba(0,100,255,0.12)}
+
+/* ── APP SHELL ── */
+.app{position:relative;z-index:2;display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:62px;background:rgba(2,8,16,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-bd);position:sticky;top:0;z-index:100}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-gem{width:40px;height:40px;border:1.5px solid var(--cyan);border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(0,212,255,0.06);box-shadow:0 0 20px rgba(0,212,255,0.2),inset 0 1px 0 rgba(0,212,255,0.2);position:relative;overflow:hidden}
+.logo-gem::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.15),transparent);animation:gemshine 3s ease-in-out infinite alternate}
+@keyframes gemshine{from{opacity:0.3}to{opacity:1}}
+.logo-gem span{font-family:var(--exo);font-weight:900;font-size:11px;color:var(--cyan);letter-spacing:1px}
+.logo-name{font-family:var(--exo);font-weight:800;font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
+.logo-name em{color:var(--cyan);font-style:normal}
+.logo-tag{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:1px}
+.hdr-nav{display:flex;gap:0}
+.nav-btn{font-family:var(--exo);font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:0 16px;height:62px;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .2s;position:relative;white-space:nowrap}
+.nav-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--cyan);box-shadow:0 0 10px var(--cyan);transition:all .25s}
+.nav-btn.active{color:var(--cyan)}
+.nav-btn.active::after,.nav-btn:hover::after{left:16px;right:16px}
+.nav-btn:hover{color:var(--white)}
+.hdr-right{display:flex;align-items:center;gap:14px}
+.sys-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
+.sys-time{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px}
+.ver-badge{font-family:var(--mono);font-size:9px;color:var(--cyan);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:3px 8px;border-radius:3px;letter-spacing:2px}
+
+/* ── BODY LAYOUT ── */
+.body{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 62px)}
+.sidebar{background:rgba(2,8,16,0.7);backdrop-filter:blur(20px);border-right:1px solid var(--glass-bd);padding:20px 14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:calc(100vh - 62px);position:sticky;top:62px}
+.workspace{padding:20px 24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+
+/* ── SECTION LABELS ── */
+.slabel{font-family:var(--exo);font-weight:700;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:8px;opacity:.8}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,212,255,.3),transparent)}
+
+/* ── GLASS CARDS ── */
+.gcard{padding:16px 18px}
+.gcard-title{font-family:var(--exo);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;opacity:.85}
+
+/* ── MCC FLEET ── */
+.mcc-group{margin-bottom:10px}
+.mcc-hdr{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--glass-bd2);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.asset-btn{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid transparent;border-left:2px solid transparent;border-radius:6px;background:transparent;color:var(--white);font-family:var(--exo);font-size:11px;cursor:pointer;transition:all .2s;text-align:left;width:100%;margin-bottom:3px}
+.asset-btn:hover{background:rgba(0,212,255,.05);border-color:rgba(0,212,255,.15)}
+.asset-btn.active{border-left-color:var(--cyan);background:rgba(0,212,255,.08);box-shadow:inset 0 0 20px rgba(0,212,255,.04)}
+.atag{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;letter-spacing:1px}
+.tok{background:rgba(0,255,179,.08);color:var(--green);border:1px solid rgba(0,255,179,.2)}
+.twarn{background:rgba(255,176,32,.08);color:var(--amber);border:1px solid rgba(255,176,32,.2)}
+.tcrit{background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.2)}
+
+/* ── FORM CONTROLS ── */
+.field{margin-bottom:10px}
+.field label{display:block;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;margin-bottom:5px;text-transform:uppercase}
+.field input,.field select{width:100%;background:rgba(0,10,25,0.7);border:1px solid var(--glass-bd);border-radius:4px;color:var(--white);font-family:var(--mono);font-size:11px;padding:7px 10px;outline:none;transition:border-color .2s;backdrop-filter:blur(8px)}
+.field input:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,212,255,.08)}
+.field select option{background:#040D1A}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--exo);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:none;border-radius:6px;padding:11px 20px;cursor:pointer;transition:all .2s;width:100%}
+.btn-primary{background:linear-gradient(135deg,#00A8CC,#0066FF);color:#fff;box-shadow:0 4px 20px rgba(0,150,255,.25)}
+.btn-primary:hover{box-shadow:0 4px 30px rgba(0,200,255,.4);transform:translateY(-1px)}
+.btn-ghost{background:rgba(0,212,255,.06);color:var(--cyan);border:1px solid rgba(0,212,255,.2);border-radius:6px;padding:8px 16px;font-family:var(--exo);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.4)}
+.btn-sm{padding:5px 12px;font-size:10px}
+
+/* ── DROP ZONE ── */
+.drop-zone{border:1px dashed rgba(0,212,255,.2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(0,212,255,.02)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--cyan);background:rgba(0,212,255,.06)}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-text{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--glass-bd);margin-bottom:18px;flex-wrap:wrap}
+.tab{font-family:var(--exo);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+.tab:hover{color:var(--white)}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);text-shadow:0 0 12px rgba(0,212,255,.4)}
+.tab-panel{display:none;flex-direction:column;gap:18px}
+.tab-panel.active{display:flex}
+
+/* ── HEALTH ARC ── */
+.health-panel{display:grid;grid-template-columns:130px 1fr;gap:20px;align-items:center}
+.arc-wrap{position:relative;width:130px;height:130px;flex-shrink:0}
+.arc-wrap svg{position:absolute;inset:0}
+.arc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.arc-score{font-family:var(--exo);font-weight:900;font-size:36px;line-height:1;color:var(--white);text-shadow:0 0 20px rgba(0,212,255,.5)}
+.arc-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;margin-top:2px}
+.health-stats{display:flex;flex-direction:column;gap:8px}
+.hstat{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--glass-bd2);padding-bottom:7px}
+.hstat:last-child{border:none;padding:0}
+.hsl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.hsv{font-family:var(--mono);font-size:12px;color:var(--white)}
+.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+
+/* ── CANVAS CARDS ── */
+.canvas-card{padding:0;overflow:hidden}
+.canvas-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--glass-bd2)}
+.canvas-title{font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase}
+.canvas-meta{font-family:var(--mono);font-size:9px;color:var(--muted)}
+canvas{display:block;width:100%}
+.cursor-tip{position:absolute;background:rgba(4,13,26,0.9);border:1px solid var(--glass-bd);padding:5px 10px;border-radius:4px;font-family:var(--mono);font-size:10px;pointer-events:none;white-space:nowrap;z-index:20;display:none;backdrop-filter:blur(8px)}
+
+/* ── FAULT GRID ── */
+.fault-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fc{padding:12px;border-radius:8px;position:relative;overflow:hidden;transition:all .3s}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transition:all .3s}
+.fc.fc-ok::before{background:linear-gradient(90deg,var(--green),transparent);box-shadow:0 0 10px var(--green)}
+.fc.fc-warn::before{background:linear-gradient(90deg,var(--amber),transparent);box-shadow:0 0 10px var(--amber)}
+.fc.fc-crit::before{background:linear-gradient(90deg,var(--red),transparent);box-shadow:0 0 15px var(--red)}
+.fc-name{font-family:var(--exo);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--white);margin-bottom:3px}
+.fc-freq{font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:8px}
+.fc-bar-w{background:rgba(0,0,0,.3);border-radius:2px;height:3px;overflow:hidden;margin-bottom:6px}
+.fc-bar{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.fc.fc-ok .fc-bar{background:var(--green);box-shadow:0 0 6px var(--green)}
+.fc.fc-warn .fc-bar{background:var(--amber)}
+.fc.fc-crit .fc-bar{background:var(--red);box-shadow:0 0 8px var(--red)}
+.fc-score{font-family:var(--exo);font-weight:900;font-size:22px;transition:color .3s}
+.fc.fc-ok .fc-score{color:var(--green);text-shadow:0 0 15px rgba(0,255,179,.4)}
+.fc.fc-warn .fc-score{color:var(--amber)}
+.fc.fc-crit .fc-score{color:var(--red);text-shadow:0 0 15px rgba(255,59,92,.5)}
+.fc-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:2px}
+
+/* ── METRIC TILES ── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.metric-tile{padding:14px 16px;text-align:center}
+.mt-val{font-family:var(--exo);font-weight:900;font-size:24px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3);letter-spacing:1px}
+.mt-unit{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:3px}
+.mt-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.mt-sub{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:2px}
+
+/* ── FREQ TABLE ── */
+.ftable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+.ftable th{text-align:left;padding:7px 10px;color:rgba(0,212,255,.6);border-bottom:1px solid var(--glass-bd);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.ftable td{padding:7px 10px;border-bottom:1px solid var(--glass-bd2);color:var(--white)}
+.ftable tr:last-child td{border:none}
+.ftable tr:hover td{background:rgba(0,212,255,.03)}
+.ftag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+.ftf{background:rgba(255,59,92,.1);color:var(--red);border:1px solid rgba(255,59,92,.25)}
+.ftw{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.25)}
+.ftn{background:rgba(0,255,179,.05);color:var(--green);border:1px solid rgba(0,255,179,.15)}
+
+/* ── ALERT LOG ── */
+.alert-row{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--glass-bd2);font-family:var(--mono);font-size:10px;flex-wrap:wrap}
+.alert-code{padding:2px 8px;border-radius:3px;font-size:8px;letter-spacing:2px;min-width:38px;text-align:center}
+.alert-empty{font-family:var(--mono);font-size:11px;color:var(--muted);padding:24px 0;text-align:center}
+
+/* ── REPORT ── */
+.report-block{border-left:2px solid var(--cyan);padding:20px 24px}
+.report-block.warn-block{border-left-color:var(--amber)}
+.rh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--glass-bd)}
+.rtitle{font-family:var(--exo);font-weight:900;font-size:18px;letter-spacing:.06em;color:var(--white)}
+.rsub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px}
+.rbadge{font-family:var(--exo);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:4px}
+.rbcrit{background:rgba(255,59,92,.1);color:var(--red);border:1px solid rgba(255,59,92,.3)}
+.rbwarn{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.3)}
+.rbok{background:rgba(0,255,179,.06);color:var(--green);border:1px solid rgba(0,255,179,.2)}
+.rmeta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.rmeta-cell{padding:10px 12px;border-radius:6px}
+.rml{font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.rmv{font-family:var(--exo);font-weight:800;font-size:16px;color:var(--white)}
+.rsec{margin-bottom:14px}
+.rsec-title{font-family:var(--exo);font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(0,212,255,.6);margin-bottom:8px}
+.rbody{font-family:var(--exo);font-size:13px;color:rgba(232,244,255,.75);line-height:1.75}
+.rfinding{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;margin-bottom:6px;border-radius:6px;border-left:2px solid transparent;font-family:var(--mono);font-size:10px}
+
+/* ── REVENUE ── */
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.rev-cell{padding:12px;text-align:center;border-radius:8px}
+.rev-num{font-family:var(--exo);font-weight:900;font-size:20px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3)}
+.rev-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+
+/* ── 3D WAVEFORM BADGE ── */
+.three-phase-legend{display:flex;gap:16px;padding:10px 16px;border-top:1px solid var(--glass-bd2)}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── POWER QUALITY ── */
+.pq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.harmonic-bars{display:flex;align-items:flex-end;gap:4px;height:120px;padding:10px 0}
+.hbar-wrap{display:flex;flex-direction:column;align-items:center;flex:1}
+.hbar{width:100%;border-radius:3px 3px 0 0;transition:height .6s cubic-bezier(.4,0,.2,1);min-height:2px;position:relative}
+.hbar-label{font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:4px;text-align:center}
+.hbar-pct{font-family:var(--mono);font-size:7px;color:var(--muted);margin-top:1px}
+
+/* ── HOME / NEXUS LANDING ── */
+.nexus-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;position:relative;overflow:hidden}
+.nexus-hero::before{content:'NEXUS';position:absolute;font-family:var(--exo);font-weight:900;font-size:160px;color:rgba(0,212,255,.025);letter-spacing:.1em;pointer-events:none;user-select:none;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.hero-eyebrow{font-family:var(--mono);font-size:9px;color:var(--cyan);letter-spacing:5px;text-transform:uppercase;margin-bottom:14px;opacity:.7}
+.hero-title{font-family:var(--exo);font-weight:900;font-size:40px;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;background:linear-gradient(135deg,#E8F4FF 30%,#00D4FF 70%,#0066FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.hero-sub{font-family:var(--exo);font-weight:300;font-size:14px;color:rgba(232,244,255,.5);letter-spacing:.1em;text-transform:uppercase;max-width:500px;line-height:1.7}
+.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:4px}
+.hub-card{padding:20px;cursor:pointer;transition:all .3s;text-align:center}
+.hub-card:hover{transform:translateY(-4px);box-shadow:0 8px 40px rgba(0,212,255,.1),0 0 0 1px rgba(0,212,255,.2)}
+.hub-icon{font-size:28px;margin-bottom:10px;display:block}
+.hub-title{font-family:var(--exo);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.hub-desc{font-family:var(--exo);font-weight:300;font-size:11px;color:var(--muted);line-height:1.6}
+
+/* ── STATS BAR ── */
+.stats-bar{background:rgba(2,8,16,.85);backdrop-filter:blur(20px);border-top:1px solid var(--glass-bd);display:flex;justify-content:space-around;padding:12px 28px;flex-wrap:wrap;gap:8px;position:sticky;bottom:0;z-index:50}
+.sbar-cell{text-align:center}
+.sbar-num{font-family:var(--exo);font-weight:900;font-size:20px;color:var(--cyan);text-shadow:0 0 12px rgba(0,212,255,.3)}
+.sbar-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:2px}
+
+/* ── LOADING ── */
+.loading-bar{height:2px;border-radius:1px;overflow:hidden;margin-top:8px;background:rgba(0,212,255,.1)}
+.loading-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--green));border-radius:1px;width:0%;transition:width .12s linear;box-shadow:0 0 8px var(--cyan)}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:40px 20px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:.3}
+
+@keyframes floatin{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fadein{animation:floatin .4s ease both}
+
+@media(max-width:1100px){.body{grid-template-columns:220px 1fr}.fault-grid{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:repeat(2,1fr)}.rmeta{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.body{grid-template-columns:1fr}.sidebar{position:static;max-height:none}.hdr-nav{display:none}.fault-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<canvas id="particle-canvas"></canvas>
+
+<div class="app">
+<header class="hdr">
+  <div class="logo-wrap">
+    <div class="logo-gem"><span>AB³</span></div>
+    <div>
+      <div class="logo-name">AI Base<em>³</em> &nbsp;NEXUS</div>
+      <div class="logo-tag">Electrical Intelligence Platform</div>
+    </div>
+  </div>
+  <nav class="hdr-nav">
+    <button class="nav-btn active" onclick="showPage('home')">Home</button>
+    <button class="nav-btn" onclick="showPage('esa')">ESA Engine</button>
+    <button class="nav-btn" onclick="showPage('pq')">Power Quality</button>
+    <button class="nav-btn" onclick="showPage('fleet')">Fleet</button>
+    <button class="nav-btn" onclick="showPage('reports')">Reports</button>
+  </nav>
+  <div class="hdr-right">
+    <span class="sys-dot"></span>
+    <span class="sys-time" id="sys-time"></span>
+    <span class="ver-badge">v3.0</span>
+  </div>
+</header>
+
+<div class="body">
+<aside class="sidebar">
+  <div>
+    <div class="slabel">MCC Fleet</div>
+    <div class="glass glass-lt gcard" style="padding:10px">
+      <div class="gcard-title" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+        <span>Asset Select</span>
+        <span id="fleet-badge" class="atag tok">FLEET OK</span>
+      </div>
+      <div id="asset-list" style="display:flex;flex-direction:column;gap:3px;max-height:200px;overflow-y:auto"></div>
+    </div>
+  </div>
+  <div>
+    <div class="slabel">Motor Config</div>
+    <div class="glass glass-lt gcard">
+      <div class="field"><label>Motor ID / Tag</label><input type="text" id="motor-id" value="P-PUMP-07"/></div>
+      <div class="frow">
+        <div class="field"><label>HP</label><input type="number" id="motor-hp" value="75"/></div>
+        <div class="field"><label>Voltage (V)</label><input type="number" id="motor-v" value="480"/></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Poles</label><select id="motor-poles"><option value="2">2</option><option value="4" selected>4</option><option value="6">6</option><option value="8">8</option></select></div>
+        <div class="field"><label>Rotor Bars</label><input type="number" id="rotor-bars" value="48"/></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Supply Hz</label><input type="number" id="supply-freq" value="60" step=".1"/></div>
+        <div class="field"><label>Nameplate RPM</label><input type="number" id="nameplate-rpm" value="1775"/></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="slabel">Bearing Geometry</div>
+    <div class="glass glass-lt gcard">
+      <div class="field"><label>Bearing Model</label><select id="bearing-model" onchange="loadBearing(this.value)"><option value="6205">6205 (CWRU)</option><option value="6203">6203</option><option value="6207">6207</option><option value="custom">Custom</option></select></div>
+      <div class="frow">
+        <div class="field"><label>Rolling Elements</label><input type="number" id="nb" value="9"/></div>
+        <div class="field"><label>Contact Angle°</label><input type="number" id="angle" value="0"/></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Ball Dia (mm)</label><input type="number" id="bd" value="7.94" step=".01"/></div>
+        <div class="field"><label>Pitch Dia (mm)</label><input type="number" id="pd" value="38.5" step=".1"/></div>
+      </div>
+      <div id="bearing-freqs" style="background:rgba(0,0,0,.3);border:1px solid var(--glass-bd);margin-top:8px;padding:10px;font-family:var(--mono);font-size:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-radius:6px"></div>
+    </div>
+  </div>
+  <div>
+    <div class="slabel">Signal Input</div>
+    <div class="glass glass-lt gcard">
+      <div class="frow">
+        <div class="field"><label>Sample Rate</label><input type="number" id="sample-rate" value="12000"/></div>
+        <div class="field"><label>Signal Type</label><select id="sig-type"><option value="current">Current (A)</option><option value="vibration">Vibration (g)</option><option value="voltage">Voltage</option></select></div>
+      </div>
+      <div class="drop-zone" id="drop-zone">
+        <div style="font-size:20px;margin-bottom:4px">📂</div>
+        <div class="drop-text">Drop CSV or click to browse</div>
+        <input type="file" id="file-input" accept=".csv,.txt,.dat,.bin" onchange="loadFile(event)"/>
+      </div>
+      <div style="text-align:center;margin:8px 0;font-family:var(--mono);font-size:9px;color:var(--muted)">— inject scenario —</div>
+      <div class="field"><label>Fault Scenario</label><select id="fault-scenario"><option value="none">Clean Motor</option><option value="brb_mild">Broken Rotor Bar (Mild)</option><option value="brb_severe">Broken Rotor Bar (Severe)</option><option value="bearing_outer">Bearing Outer Race (BPFO)</option><option value="bearing_inner">Bearing Inner Race (BPFI)</option><option value="eccentricity">Air Gap Eccentricity</option><option value="unbalance">Mechanical Unbalance</option><option value="multifault">Multi-Fault (BRB + Bearing)</option></select></div>
+      <button class="btn btn-primary" onclick="runAnalysis()">⚡ RUN ESA ANALYSIS</button>
+      <div class="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+    </div>
+  </div>
+  <div>
+    <div class="slabel">Brain Access Fee</div>
+    <div class="glass glass-lt gcard">
+      <div class="frow">
+        <div class="field"><label>Monitored Points</label><input type="number" id="rev-points" value="24" min="1" oninput="updateRevenue()"/></div>
+        <div class="field"><label>Tier</label><select id="rev-tier" onchange="updateRevenue()"><option value="297">T1 — $297/pt</option><option value="197">T2 — $197/pt</option><option value="147">Ent — $147/pt</option></select></div>
+      </div>
+      <div class="rev-grid">
+        <div class="glass glass-lt rev-cell"><div class="rev-num" id="rev-mrr">$7.1K</div><div class="rev-lbl">MRR</div></div>
+        <div class="glass glass-lt rev-cell"><div class="rev-num" id="rev-arr">$85K</div><div class="rev-lbl">ARR</div></div>
+        <div class="glass glass-lt rev-cell"><div class="rev-num" id="rev-pts">24</div><div class="rev-lbl">POINTS</div></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="workspace" id="workspace">
+
+<!-- ══ HOME PAGE ══ -->
+<div id="page-home" class="fadein">
+  <div class="glass glow-cyan" style="padding:40px 32px;overflow:hidden;position:relative">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(0,100,255,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(0,212,255,0.06) 0%,transparent 60%);pointer-events:none"></div>
+    <div class="nexus-hero">
+      <div class="hero-eyebrow">AI Base³ Solutions · St. Louis, MO</div>
+      <div class="hero-title">NEXUS<br>ESA Platform</div>
+      <div class="hero-sub">Electrical Signature Analysis · Power Quality · Predictive Maintenance Intelligence</div>
+    </div>
+    <div class="hub-grid" style="margin-top:28px">
+      <div class="glass glass-lt hub-card" onclick="showPage('esa');gotoTab('spectrum')">
+        <span class="hub-icon">⚡</span>
+        <div class="hub-title">ESA Diagnostics</div>
+        <div class="hub-desc">Full motor current signature analysis. 65536-pt FFT. 6 fault classifiers. IEEE 1068 thresholds.</div>
+      </div>
+      <div class="glass glass-lt hub-card" onclick="showPage('pq')">
+        <span class="hub-icon">〰️</span>
+        <div class="hub-title">Power Quality</div>
+        <div class="hub-desc">Harmonic distortion analysis. 3-phase waveform. Voltage unbalance. PF correction.</div>
+      </div>
+      <div class="glass glass-lt hub-card" onclick="showPage('fleet')">
+        <span class="hub-icon">🏭</span>
+        <div class="hub-title">Fleet Intelligence</div>
+        <div class="hub-desc">MCC lineup monitoring. Fleet health overview. Trend history. Work order generation.</div>
+      </div>
+      <div class="glass glass-lt hub-card" onclick="showPage('reports')">
+        <span class="hub-icon">📋</span>
+        <div class="hub-title">Intelligence Reports</div>
+        <div class="hub-desc">Client-ready Motor Intelligence Reports. Work orders. Brain Access Fee deliverables.</div>
+      </div>
+      <div class="glass glass-lt hub-card" onclick="document.getElementById('rev-points').focus()">
+        <span class="hub-icon">💰</span>
+        <div class="hub-title">Revenue Calculator</div>
+        <div class="hub-desc">Brain Access Fee MRR/ARR modeling. Per-point pricing tiers. Real-time calculation.</div>
+      </div>
+      <div class="glass glass-lt hub-card" style="cursor:default">
+        <span class="hub-icon">🛰️</span>
+        <div class="hub-title">CT10x Integration</div>
+        <div class="hub-desc">Milesight CT10x · UG65 LoRaWAN · MQTT pipeline. Non-intrusive clip-on current sensing.</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+    <div class="glass glass-lt" style="padding:18px;text-align:center">
+      <div style="font-family:var(--exo);font-weight:900;font-size:28px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3)">27K+</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;margin-top:4px">FIELD HOURS</div>
+    </div>
+    <div class="glass glass-lt" style="padding:18px;text-align:center">
+      <div style="font-family:var(--exo);font-weight:900;font-size:28px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3)">6</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;margin-top:4px">FAULT CLASSES</div>
+    </div>
+    <div class="glass glass-lt" style="padding:18px;text-align:center">
+      <div style="font-family:var(--exo);font-weight:900;font-size:28px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3)">65536</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;margin-top:4px">FFT POINTS</div>
+    </div>
+    <div class="glass glass-lt" style="padding:18px;text-align:center">
+      <div style="font-family:var(--exo);font-weight:900;font-size:28px;color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,.3)">$147K</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:3px;margin-top:4px">TARGET ARR</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ESA PAGE ══ -->
+<div id="page-esa" style="display:none" class="fadein">
+  <div class="tabs" id="esa-tabs">
+    <button class="tab active" onclick="gotoTab('spectrum')">FFT Spectrum</button>
+    <button class="tab" onclick="gotoTab('classifiers')">Fault Classifiers</button>
+    <button class="tab" onclick="gotoTab('three-phase')">3-Phase Waveform</button>
+    <button class="tab" onclick="gotoTab('frequencies')">Frequency Map</button>
+    <button class="tab" onclick="gotoTab('alerts')">Alert Log</button>
+    <button class="tab" onclick="gotoTab('report')">Intelligence Report</button>
+  </div>
+
+  <!-- SPECTRUM TAB -->
+  <div class="tab-panel active" id="tab-spectrum">
+    <div class="glass glow-cyan" style="padding:18px">
+      <div class="health-panel">
+        <div class="arc-wrap">
+          <svg viewBox="0 0 130 130" width="130" height="130">
+            <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(0,212,255,0.08)" stroke-width="8"/>
+            <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(0,212,255,0.04)" stroke-width="14"/>
+            <circle cx="65" cy="65" r="54" fill="none" id="arc-progress" stroke="#00D4FF" stroke-width="8" stroke-linecap="round" stroke-dasharray="271.5" stroke-dashoffset="271.5" transform="rotate(-225 65 65)" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke .5s;filter:drop-shadow(0 0 6px currentColor)"/>
+          </svg>
+          <div class="arc-center"><div class="arc-score" id="health-score">—</div><div class="arc-lbl">HEALTH</div></div>
+        </div>
+        <div class="health-stats">
+          <div class="hstat"><span class="hsl">Motor ID</span><span class="hsv" id="stat-motor-id">—</span></div>
+          <div class="hstat"><span class="hsl">Slip Frequency</span><span class="hsv" id="stat-slip">—</span></div>
+          <div class="hstat"><span class="hsl">THD (Current)</span><span class="hsv" id="stat-thd">—</span></div>
+          <div class="hstat"><span class="hsl">Dominant Fault</span><span class="hsv" id="stat-dominant">—</span></div>
+          <div class="hstat" style="border:none;padding:0"><span class="hsl">Recommended Action</span><span class="hsv" id="stat-action" style="font-size:10px;max-width:60%;text-align:right">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="glass canvas-card glow-cyan">
+      <div class="canvas-hdr"><span class="canvas-title">Current Spectrum — FFT Magnitude (dBc)</span><span class="canvas-meta" id="fft-meta">Awaiting signal…</span></div>
+      <canvas id="fft-canvas" height="230"></canvas>
+      <div class="cursor-tip" id="cursor-tip"></div>
+    </div>
+    <div class="glass canvas-card">
+      <div class="canvas-hdr"><span class="canvas-title">Time Domain Waveform — Phase A</span><span class="canvas-meta" id="wave-meta">—</span></div>
+      <canvas id="wave-canvas" height="110"></canvas>
+    </div>
+  </div>
+
+  <!-- CLASSIFIERS TAB -->
+  <div class="tab-panel" id="tab-classifiers">
+    <div class="fault-grid" id="fault-grid"></div>
+    <div class="glass canvas-card">
+      <div class="canvas-hdr"><span class="canvas-title">Sideband Constellation — Fault Signature Map</span><span class="canvas-meta">60Hz erasure · sidebands ±n·f_fault</span></div>
+      <canvas id="constellation-canvas" height="230"></canvas>
+    </div>
+  </div>
+
+  <!-- THREE-PHASE TAB -->
+  <div class="tab-panel" id="tab-three-phase">
+    <div class="glass canvas-card glow-blue">
+      <div class="canvas-hdr"><span class="canvas-title">3-Phase Waveform — A / B / C · 120° Offset</span><span class="canvas-meta" id="phase3-meta">—</span></div>
+      <canvas id="phase3-canvas" height="260"></canvas>
+      <div class="three-phase-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#00D4FF;box-shadow:0 0 8px #00D4FF"></div>Phase A (0°)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#00FFB3;box-shadow:0 0 8px #00FFB3"></div>Phase B (−120°)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#FFB020;box-shadow:0 0 8px #FFB020"></div>Phase C (−240°)</div>
+        <div class="leg-item" style="margin-left:auto"><span id="phase-unbalance" style="color:var(--muted)">Unbalance: —</span></div>
+      </div>
+    </div>
+    <div class="glass canvas-card">
+      <div class="canvas-hdr"><span class="canvas-title">Phase Phasor Diagram</span><span class="canvas-meta">Fundamental component · RMS magnitudes</span></div>
+      <canvas id="phasor-canvas" height="220"></canvas>
+    </div>
+    <div class="metric-grid">
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="ph-rms-a">—</div><div class="mt-lbl">Phase A RMS</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="ph-rms-b">—</div><div class="mt-lbl">Phase B RMS</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="ph-rms-c">—</div><div class="mt-lbl">Phase C RMS</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="ph-unbal">—</div><div class="mt-lbl">Unbalance %</div></div>
+    </div>
+  </div>
+
+  <!-- FREQUENCIES TAB -->
+  <div class="tab-panel" id="tab-frequencies">
+    <div class="glass" style="padding:16px 18px">
+      <div class="gcard-title">Bearing Fault Frequency Map — MCSA Sideband Locations</div>
+      <p style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.7">Sidebands at f<sub>line</sub> ± n·f<sub>fault</sub>. IEEE 1068 thresholds. Confidence ≥50% = active fault.</p>
+      <table class="ftable"><thead><tr><th>Fault Type</th><th>Fault Freq</th><th>SB −1</th><th>SB +1</th><th>SB −2</th><th>SB +2</th><th>Magnitude</th><th>Thresh</th><th>Status</th></tr></thead>
+      <tbody id="freq-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);font-size:10px;padding:20px">Run analysis to populate</td></tr></tbody></table>
+    </div>
+    <div class="glass" style="padding:16px 18px">
+      <div class="gcard-title">MCSA Physics Reference</div>
+      <table class="ftable"><thead><tr><th>Fault</th><th>Signature</th><th>Formula</th><th>Threshold (dBc)</th></tr></thead>
+      <tbody>
+        <tr><td>Broken Rotor Bar</td><td>Slip-freq sidebands on fundamental</td><td>f<sub>line</sub> ± 2ks·f<sub>line</sub></td><td>−46</td></tr>
+        <tr><td>Outer Race BPFO</td><td>BPFO sidebands on fundamental</td><td>f<sub>line</sub> ± n·BPFO</td><td>−50</td></tr>
+        <tr><td>Inner Race BPFI</td><td>BPFI sidebands (speed-modulated)</td><td>f<sub>line</sub> ± n·(BPFI ± f_r)</td><td>−50</td></tr>
+        <tr><td>Ball Spin BSF</td><td>BSF sidebands — low amplitude</td><td>f<sub>line</sub> ± n·BSF</td><td>−56</td></tr>
+        <tr><td>Eccentricity</td><td>Pole-pass sidebands</td><td>f<sub>line</sub> ± f_pp</td><td>−46</td></tr>
+        <tr><td>Unbalance</td><td>1× running speed modulation</td><td>f<sub>line</sub> ± f_r</td><td>−48</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- ALERTS TAB -->
+  <div class="tab-panel" id="tab-alerts">
+    <div class="glass" style="padding:16px 18px">
+      <div class="gcard-title" style="display:flex;justify-content:space-between;align-items:center"><span>Alert Log — Last 50 Events</span><button class="btn-ghost btn-sm" onclick="clearAlerts()">Clear</button></div>
+      <div id="alert-list"><div class="alert-empty">No alerts. Run analysis on a fault scenario to generate alerts.</div></div>
+    </div>
+  </div>
+
+  <!-- REPORT TAB -->
+  <div class="tab-panel" id="tab-report">
+    <div id="report-container"><div class="empty-state glass glass-lt"><div class="empty-icon">📋</div><div>Run analysis to generate Motor Intelligence Report</div><div style="margin-top:8px;font-size:10px">Client-ready · Brain Access Fee deliverable</div></div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-ghost" id="copy-btn" onclick="copyReport()" style="display:none">Copy Report</button>
+      <button class="btn-ghost" id="wo-btn" onclick="generateWorkOrder()" style="display:none">Generate Work Order</button>
+    </div>
+    <div id="wo-container"></div>
+  </div>
+</div>
+
+<!-- ══ POWER QUALITY PAGE ══ -->
+<div id="page-pq" style="display:none" class="fadein">
+  <div class="glass glow-cyan" style="padding:18px">
+    <div class="gcard-title">Power Quality Analysis — IEEE 519 / NEMA MG1</div>
+    <div class="metric-grid">
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-thd" style="color:var(--green)">—</div><div class="mt-lbl">Total THD %</div><div class="mt-sub">IEEE 519 limit: 5%</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-pf" style="color:var(--cyan)">—</div><div class="mt-lbl">Power Factor</div><div class="mt-sub">Target: ≥0.90</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-unbal" style="color:var(--cyan)">—</div><div class="mt-lbl">Volt Unbalance %</div><div class="mt-sub">NEMA limit: 3%</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-cf" style="color:var(--cyan)">—</div><div class="mt-lbl">Crest Factor</div><div class="mt-sub">Nominal: 1.41</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-rms">—</div><div class="mt-lbl">Current RMS (A)</div><div class="mt-sub" id="pq-fla">FLA: —</div></div>
+      <div class="glass glass-lt metric-tile"><div class="mt-val" id="pq-freq">—</div><div class="mt-lbl">Fundamental Hz</div><div class="mt-sub">Nominal: 60.00</div></div>
+    </div>
+  </div>
+
+  <div class="pq-grid">
+    <div class="glass canvas-card">
+      <div class="canvas-hdr"><span class="canvas-title">Harmonic Spectrum — 1st through 11th</span><span class="canvas-meta">% of fundamental · IEEE 519 limits</span></div>
+      <canvas id="harmonic-canvas" height="200"></canvas>
+      <div style="padding:10px 16px;font-family:var(--mono);font-size:9px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap">
+        <span>■ <span style="color:var(--green)">Within IEEE 519</span></span>
+        <span>■ <span style="color:var(--amber)">Advisory</span></span>
+        <span>■ <span style="color:var(--red)">Exceeds limit</span></span>
+      </div>
+    </div>
+    <div class="glass canvas-card">
+      <div class="canvas-hdr"><span class="canvas-title">Waveform Distortion — Clean vs Actual</span><span class="canvas-meta">Phase A · Overlay comparison</span></div>
+      <canvas id="distortion-canvas" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="glass canvas-card glow-blue">
+    <div class="canvas-hdr"><span class="canvas-title">3-Phase Power Quality Waveform</span><span class="canvas-meta" id="pq3-meta">—</span></div>
+    <canvas id="pq3-canvas" height="250"></canvas>
+    <div class="three-phase-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#00D4FF"></div>Phase A</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#00FFB3"></div>Phase B</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#FFB020"></div>Phase C</div>
+      <div class="leg-item" style="margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--muted)">CT10x via UG65 LoRaWAN</div>
+    </div>
+  </div>
+
+  <div class="glass" style="padding:16px 18px">
+    <div class="gcard-title">Harmonic Analysis Table — IEEE 519 Compliance</div>
+    <table class="ftable">
+      <thead><tr><th>Harmonic</th><th>Frequency</th><th>Magnitude (% fund)</th><th>IEEE 519 Limit</th><th>Status</th></tr></thead>
+      <tbody id="harmonic-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;font-size:10px">Run analysis to populate harmonic table</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ FLEET PAGE ══ -->
+<div id="page-fleet" style="display:none" class="fadein">
+  <div class="glass glow-cyan" style="padding:20px">
+    <div class="gcard-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Fleet Health Overview</span>
+      <span id="fleet-status-badge" class="atag tok">ALL SYSTEMS NOMINAL</span>
+    </div>
+    <div id="fleet-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px"></div>
+  </div>
+  <div class="glass" style="padding:16px 18px">
+    <div class="gcard-title">Fleet Health Trend — Last 10 Analyses Per Asset</div>
+    <canvas id="fleet-trend-canvas" height="180"></canvas>
+  </div>
+</div>
+
+<!-- ══ REPORTS PAGE ══ -->
+<div id="page-reports" style="display:none" class="fadein">
+  <div class="glass" style="padding:20px">
+    <div class="nexus-hero" style="min-height:140px">
+      <div class="hero-eyebrow">Client Deliverables</div>
+      <div class="hero-title" style="font-size:28px">Intelligence Reports</div>
+      <div class="hero-sub" style="font-size:12px">Motor Intelligence Reports are the Brain Access Fee deliverable. Run ESA analysis on any asset then generate a client-ready report.</div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="width:auto;padding:12px 28px" onclick="showPage('esa');gotoTab('report')">Go to Report Generator →</button>
+      <button class="btn-ghost" onclick="showPage('esa');runAnalysis()">Run New Analysis</button>
+    </div>
+  </div>
+  <div id="reports-recent" class="glass glass-lt" style="padding:16px 18px">
+    <div class="gcard-title">Recent Analysis Sessions</div>
+    <div id="sessions-list"><div class="alert-empty">No analysis sessions yet. Run ESA analysis to generate reports.</div></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div class="stats-bar">
+  <div class="sbar-cell"><div class="sbar-num">27K+</div><div class="sbar-lbl">FIELD HRS</div></div>
+  <div class="sbar-cell"><div class="sbar-num" id="sb-health" style="color:var(--cyan)">—</div><div class="sbar-lbl">MOTOR HLTH</div></div>
+  <div class="sbar-cell"><div class="sbar-num" id="sb-faults" style="color:var(--green)">—</div><div class="sbar-lbl">FAULTS</div></div>
+  <div class="sbar-cell"><div class="sbar-num" id="sb-thd" style="color:var(--cyan)">—</div><div class="sbar-lbl">THD %</div></div>
+  <div class="sbar-cell"><div class="sbar-num" id="sb-mrr" style="color:var(--cyan)">$7.1K</div><div class="sbar-lbl">CURR MRR</div></div>
+  <div class="sbar-cell"><div class="sbar-num" id="sb-fleet" style="color:var(--cyan)">8</div><div class="sbar-lbl">ASSETS</div></div>
+</div>
+</div>
+
+<script>
+'use strict';
+// ══════════ PARTICLE ENGINE ══════════
+(function(){
+  const c=document.getElementById('particle-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<80;i++)particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.3,alpha:Math.random()*.4+.1});
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,180,255,${p.alpha})`;ctx.fill();
+    });
+    // Draw connections
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,180,255,${.04*(1-d/120)})`;ctx.lineWidth=.5;ctx.stroke();}
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ══════════ STATE ══════════
+const S={signal:null,fftMag:null,fftFreqs:null,faults:{},health:100,analyzed:false,alerts:[],healthHistory:[],activeAsset:null,sessions:[],
+fleet:[
+  {id:'MCC-A-01',name:'Cooling Tower Fan #1',loc:'Mech Room A',hp:75,v:480,poles:4,rpm:1775,health:null,status:'ok'},
+  {id:'MCC-A-02',name:'Cooling Tower Fan #2',loc:'Mech Room A',hp:75,v:480,poles:4,rpm:1775,health:null,status:'ok'},
+  {id:'MCC-A-03',name:'Chilled Water Pump A',loc:'Pump Room B',hp:50,v:480,poles:4,rpm:1760,health:null,status:'ok'},
+  {id:'MCC-B-01',name:'Compressor Drive #1', loc:'Roof Unit 3',hp:125,v:480,poles:6,rpm:1180,health:null,status:'ok'},
+  {id:'MCC-B-02',name:'Conveyor Belt Main',  loc:'Prod Line 1',hp:30, v:208,poles:4,rpm:1750,health:null,status:'warn'},
+  {id:'MCC-B-03',name:'Exhaust Fan Array',   loc:'Roof South', hp:20, v:208,poles:4,rpm:1755,health:null,status:'ok'},
+  {id:'MCC-C-01',name:'Process Pump Alpha',  loc:'Chem Room',  hp:60, v:480,poles:4,rpm:1770,health:null,status:'crit'},
+  {id:'MCC-C-02',name:'Agitator Drive',      loc:'Tank Farm',  hp:15, v:208,poles:6,rpm:1170,health:null,status:'ok'},
+]};
+
+// ══════════ NAVIGATION ══════════
+function showPage(page){
+  document.querySelectorAll('[id^="page-"]').forEach(p=>p.style.display='none');
+  document.getElementById('page-'+page).style.display='flex';
+  document.getElementById('page-'+page).style.flexDirection='column';
+  document.getElementById('page-'+page).style.gap='18px';
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{const pages=['home','esa','pq','fleet','reports'];b.classList.toggle('active',pages[i]===page);});
+  if(page==='pq'&&S.analyzed){drawPowerQuality();}
+  if(page==='fleet'){renderFleetPage();}
+}
+function gotoTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{const ids=['spectrum','classifiers','three-phase','frequencies','alerts','report'];t.classList.toggle('active',ids[i]===id);});
+  document.querySelectorAll('.tab-panel').forEach(p=>{p.classList.toggle('active',p.id==='tab-'+id);});
+  if(S.analyzed){
+    setTimeout(()=>{
+      if(id==='spectrum'){drawFFT(S.fftFreqs,S.fftMag,S.faults);drawWaveform(S.signal);}
+      if(id==='classifiers')drawConstellation(S.fftFreqs,S.fftMag,S.faults);
+      if(id==='three-phase')drawThreePhase(S.signal);
+    },50);
+  }
+}
+
+// ══════════ FLEET RENDER ══════════
+function renderFleet(){
+  const groups={'MCC-A Line':[0,1,2],'MCC-B Line':[3,4,5],'MCC-C Line':[6,7]};
+  const list=document.getElementById('asset-list');list.innerHTML='';
+  Object.entries(groups).forEach(([name,idxs])=>{
+    const g=document.createElement('div');g.className='mcc-group';
+    const worst=idxs.map(i=>S.fleet[i].status).includes('crit')?'crit':idxs.map(i=>S.fleet[i].status).includes('warn')?'warn':'ok';
+    g.innerHTML=`<div class="mcc-hdr"><span>${name}</span><span class="atag ${worst==='crit'?'tcrit':worst==='warn'?'twarn':'tok'}">${worst.toUpperCase()}</span></div>`;
+    idxs.forEach(i=>{
+      const a=S.fleet[i];const btn=document.createElement('button');btn.className='asset-btn'+(S.activeAsset===i?' active':'');
+      const tc=a.status==='crit'?'tcrit':a.status==='warn'?'twarn':'tok';
+      const tt=a.status==='crit'?'CRIT':a.status==='warn'?'WARN':'OK';
+      btn.innerHTML=`<div><div style="font-size:11px;font-weight:700">${a.id}</div><div style="font-size:9px;color:var(--muted);margin-top:1px">${a.name}</div></div><div style="text-align:right"><div class="atag ${tc}" style="margin-bottom:2px">${tt}</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">${a.health!==null?a.health:'-'}/100</div></div>`;
+      btn.onclick=()=>loadAsset(i);g.appendChild(btn);
+    });
+    list.appendChild(g);
+  });
+  const hc=S.fleet.some(a=>a.status==='crit'),hw=S.fleet.some(a=>a.status==='warn');
+  const fb=document.getElementById('fleet-badge');fb.className='atag '+(hc?'tcrit':hw?'twarn':'tok');fb.textContent=hc?'FAULT ACTIVE':hw?'ADVISORY':'FLEET OK';
+  document.getElementById('sb-fleet').textContent=S.fleet.length;
+}
+function renderFleetPage(){
+  const grid=document.getElementById('fleet-grid');grid.innerHTML='';
+  const groups={A:[0,1,2],B:[3,4,5],C:[6,7]};
+  S.fleet.forEach((a,i)=>{
+    const h=a.health!==null?a.health:null;
+    const col=a.status==='crit'?'var(--red)':a.status==='warn'?'var(--amber)':'var(--green)';
+    const card=document.createElement('div');
+    card.className='glass glass-lt';card.style.cssText='padding:14px 16px;cursor:pointer;transition:all .3s';
+    card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--cyan)">${a.id}</div><div style="font-family:var(--exo);font-size:12px;margin-top:2px">${a.name}</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:2px">${a.loc} · ${a.hp}HP / ${a.v}V</div></div><div style="font-family:var(--exo);font-weight:900;font-size:28px;color:${col};text-shadow:0 0 15px ${col}55">${h!==null?h:'—'}</div></div><div style="height:4px;background:rgba(0,0,0,.3);border-radius:2px;overflow:hidden"><div style="height:100%;width:${h!==null?h:0}%;background:${col};border-radius:2px;transition:width .8s;box-shadow:0 0 8px ${col}"></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:6px;text-align:right">${a.status.toUpperCase()}</div>`;
+    card.onclick=()=>{loadAsset(i);showPage('esa');};
+    grid.appendChild(card);
+  });
+  drawFleetTrend();
+}
+function loadAsset(idx){
+  S.activeAsset=idx;const a=S.fleet[idx];
+  document.getElementById('motor-id').value=a.id;document.getElementById('motor-hp').value=a.hp;
+  document.getElementById('motor-v').value=a.v;document.getElementById('motor-poles').value=a.poles;
+  document.getElementById('nameplate-rpm').value=a.rpm;
+  document.getElementById('fault-scenario').value=a.status==='crit'?'bearing_outer':a.status==='warn'?'brb_mild':'none';
+  S.signal=null;updateBearingFreqs();renderFleet();runAnalysis();
+}
+function drawFleetTrend(){
+  const c=document.getElementById('fleet-trend-canvas');if(!c)return;
+  const W=c.offsetWidth;c.width=W;c.height=180;
+  const ctx=c.getContext('2d');ctx.clearRect(0,0,W,180);
+  ctx.fillStyle='rgba(0,0,0,0)';ctx.fillRect(0,0,W,180);
+  ctx.fillStyle='rgba(100,160,200,0.15)';ctx.font='10px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('Fleet trend data populates as each asset is analyzed',W/2,90);
+}
+
+// ══════════ BEARING ══════════
+const bearingDB={'6205':{nb:9,bd:7.94,pd:38.5,angle:0},'6203':{nb:8,bd:6.75,pd:28.5,angle:0},'6207':{nb:9,bd:9.53,pd:46.0,angle:0}};
+function loadBearing(m){const b=bearingDB[m];if(!b)return;document.getElementById('nb').value=b.nb;document.getElementById('bd').value=b.bd;document.getElementById('pd').value=b.pd;document.getElementById('angle').value=b.angle;updateBearingFreqs();}
+function calcBearing(){
+  const poles=parseInt(document.getElementById('motor-poles').value),rpm=parseFloat(document.getElementById('nameplate-rpm').value),fs=parseFloat(document.getElementById('supply-freq').value);
+  const nb=parseFloat(document.getElementById('nb').value),bd=parseFloat(document.getElementById('bd').value),pd=parseFloat(document.getElementById('pd').value),ang=parseFloat(document.getElementById('angle').value)*Math.PI/180;
+  const syncRPM=120*fs/poles,slip=(syncRPM-rpm)/syncRPM,fr=rpm/60,ratio=bd/pd*Math.cos(ang);
+  return{fr,slip,BPFO:(nb/2)*fr*(1-ratio),BPFI:(nb/2)*fr*(1+ratio),BSF:(pd/(2*bd))*fr*(1-ratio*ratio),FTF:(fr/2)*(1-ratio),fpp:slip*poles*fr,syncRPM,rpm};
+}
+function updateBearingFreqs(){
+  const b=calcBearing(),fmt=v=>v.toFixed(2)+' Hz';
+  document.getElementById('bearing-freqs').innerHTML=`<div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">BPFO</div><div style="color:var(--cyan)">${fmt(b.BPFO)}</div><div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">BPFI</div><div style="color:var(--cyan)">${fmt(b.BPFI)}</div><div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">BSF</div><div style="color:var(--white)">${fmt(b.BSF)}</div><div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">FTF</div><div style="color:var(--white)">${fmt(b.FTF)}</div><div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">f_shaft</div><div style="color:var(--white)">${fmt(b.fr)}</div><div style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em">Slip</div><div style="color:var(--amber)">${(b.slip*100).toFixed(2)}%</div>`;
+}
+
+// ══════════ COOLEY-TUKEY FFT ══════════
+function fft(re,im){
+  const n=re.length;if(n<=1)return;const half=n>>1;
+  const reE=new Float64Array(half),imE=new Float64Array(half),reO=new Float64Array(half),imO=new Float64Array(half);
+  for(let i=0;i<half;i++){reE[i]=re[i*2];imE[i]=im[i*2];reO[i]=re[i*2+1];imO[i]=im[i*2+1];}
+  fft(reE,imE);fft(reO,imO);
+  for(let k=0;k<half;k++){const th=-2*Math.PI*k/n,c=Math.cos(th),sn=Math.sin(th),tr=c*reO[k]-sn*imO[k],ti=sn*reO[k]+c*imO[k];re[k]=reE[k]+tr;im[k]=imE[k]+ti;re[k+half]=reE[k]-tr;im[k+half]=imE[k]-ti;}
+}
+function computeFFT(signal,sr){
+  let n=1;while(n<signal.length)n<<=1;n=Math.min(n,65536);
+  const re=new Float64Array(n),im=new Float64Array(n);
+  for(let i=0;i<n;i++){const w=0.5*(1-Math.cos(2*Math.PI*i/(n-1)));re[i]=(signal[i]||0)*w;}
+  fft(re,im);
+  const freqs=new Float64Array(n/2),mag=new Float64Array(n/2);
+  for(let i=0;i<n/2;i++){freqs[i]=i*sr/n;mag[i]=Math.sqrt(re[i]*re[i]+im[i]*im[i])/n;}
+  return{freqs,mag};
+}
+function magToDb(m,ref){return 20*Math.log10(Math.max(m,1e-12)/Math.max(ref,1e-12));}
+function getBinMag(freqs,mag,f,win){let mx=0;for(let i=0;i<freqs.length;i++){if(Math.abs(freqs[i]-f)<=win)mx=Math.max(mx,mag[i]);}return mx;}
+
+// ══════════ SIGNAL GENERATION ══════════
+function generateSignal(scenario){
+  const fs=parseFloat(document.getElementById('sample-rate').value),f0=parseFloat(document.getElementById('supply-freq').value);
+  const N=65536,dt=1/fs,sig=new Float64Array(N),b=calcBearing();
+  for(let i=0;i<N;i++){
+    const t=i*dt;
+    let s=Math.sin(2*Math.PI*f0*t)+0.015*Math.sin(2*Math.PI*3*f0*t+.2)+0.008*Math.sin(2*Math.PI*5*f0*t+.5)+0.004*Math.sin(2*Math.PI*7*f0*t+.8)+0.002*(Math.random()*2-1);
+    const fs_brb=2*b.slip*f0;
+    if(scenario==='brb_mild'||scenario==='multifault'){s+=0.021*Math.sin(2*Math.PI*(f0-fs_brb)*t)+0.019*Math.sin(2*Math.PI*(f0+fs_brb)*t);}
+    if(scenario==='brb_severe'){s+=0.065*Math.sin(2*Math.PI*(f0-fs_brb)*t)+0.058*Math.sin(2*Math.PI*(f0+fs_brb)*t)+0.018*Math.sin(2*Math.PI*(f0-2*fs_brb)*t)+0.016*Math.sin(2*Math.PI*(f0+2*fs_brb)*t);}
+    if(scenario==='bearing_outer'||scenario==='multifault'){s+=0.012*Math.sin(2*Math.PI*(f0-b.BPFO)*t)+0.011*Math.sin(2*Math.PI*(f0+b.BPFO)*t)+0.006*Math.sin(2*Math.PI*(f0-2*b.BPFO)*t)+0.005*Math.sin(2*Math.PI*(f0+2*b.BPFO)*t);}
+    if(scenario==='bearing_inner'){s+=0.009*Math.sin(2*Math.PI*(f0-b.BPFI)*t)+0.008*Math.sin(2*Math.PI*(f0+b.BPFI)*t)+0.004*Math.sin(2*Math.PI*(f0-b.BPFI-b.fr)*t)+0.004*Math.sin(2*Math.PI*(f0+b.BPFI+b.fr)*t);}
+    if(scenario==='eccentricity'){s+=0.028*Math.sin(2*Math.PI*(f0-b.fpp)*t)+0.025*Math.sin(2*Math.PI*(f0+b.fpp)*t)+0.010*Math.sin(2*Math.PI*(3*f0-b.fpp)*t);}
+    if(scenario==='unbalance'){s+=0.016*Math.sin(2*Math.PI*(f0-b.fr)*t)+0.014*Math.sin(2*Math.PI*(f0+b.fr)*t);}
+    sig[i]=s;
+  }
+  return sig;
+}
+
+// ══════════ FAULT CLASSIFICATION ══════════
+function classifyFaults(freqs,mag){
+  const f0=parseFloat(document.getElementById('supply-freq').value),b=calcBearing(),win=0.5;
+  const fundMag=getBinMag(freqs,mag,f0,1.0),toDb=m=>magToDb(m,fundMag);
+  const dbToConf=(db,thresh)=>Math.max(0,Math.min(100,(db-thresh)/(thresh*-0.5)*100));
+  const fs_brb=2*b.slip*f0;
+  const brbDb=Math.max(toDb(getBinMag(freqs,mag,f0-fs_brb,win)),toDb(getBinMag(freqs,mag,f0+fs_brb,win)));
+  const bpfoDb=Math.max(toDb(getBinMag(freqs,mag,f0-b.BPFO,win)),toDb(getBinMag(freqs,mag,f0+b.BPFO,win)));
+  const bpfiDb=Math.max(toDb(getBinMag(freqs,mag,f0-b.BPFI,win)),toDb(getBinMag(freqs,mag,f0+b.BPFI,win)));
+  const bsfDb=Math.max(toDb(getBinMag(freqs,mag,f0-b.BSF,win)),toDb(getBinMag(freqs,mag,f0+b.BSF,win)));
+  const eccDb=Math.max(toDb(getBinMag(freqs,mag,f0-b.fpp,win)),toDb(getBinMag(freqs,mag,f0+b.fpp,win)));
+  const unbDb=Math.max(toDb(getBinMag(freqs,mag,f0-b.fr,win)),toDb(getBinMag(freqs,mag,f0+b.fr,win)));
+  let harmP=0;[2,3,4,5,6,7].forEach(h=>{const hm=getBinMag(freqs,mag,h*f0,1.0);harmP+=hm*hm;});
+  const thd=Math.sqrt(harmP)/fundMag*100;
+  return{
+    brb:{name:'Broken Rotor Bar',freq:fs_brb.toFixed(2)+'Hz slip-sb',db:brbDb,conf:dbToConf(brbDb,-46),thresh:-46},
+    bpfo:{name:'Bearing Outer Race',freq:b.BPFO.toFixed(2)+'Hz BPFO',db:bpfoDb,conf:dbToConf(bpfoDb,-50),thresh:-50},
+    bpfi:{name:'Bearing Inner Race',freq:b.BPFI.toFixed(2)+'Hz BPFI',db:bpfiDb,conf:dbToConf(bpfiDb,-50),thresh:-50},
+    bsf:{name:'Ball Spin Fault',freq:b.BSF.toFixed(2)+'Hz BSF',db:bsfDb,conf:dbToConf(bsfDb,-56),thresh:-56},
+    ecc:{name:'Air Gap Eccentricity',freq:b.fpp.toFixed(2)+'Hz f_pp',db:eccDb,conf:dbToConf(eccDb,-46),thresh:-46},
+    unb:{name:'Mech Unbalance',freq:b.fr.toFixed(2)+'Hz 1xf_r',db:unbDb,conf:dbToConf(unbDb,-48),thresh:-48},
+    thd,fundMag,slip:b.slip,fr:b.fr,bearing:b
+  };
+}
+function calcHealth(faults){
+  const W={brb:.35,bpfo:.20,bpfi:.18,bsf:.08,ecc:.12,unb:.07};let pen=0;
+  ['brb','bpfo','bpfi','bsf','ecc','unb'].forEach(k=>{pen+=(faults[k].conf/100)*W[k]*100;});
+  pen+=Math.max(0,(faults.thd-3)*2);return Math.max(0,Math.round(100-pen));
+}
+
+// ══════════ DRAW FFT ══════════
+function drawFFT(freqs,mag,faults){
+  const canvas=document.getElementById('fft-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=230;const H=230;
+  const pad={top:20,right:20,bottom:36,left:54},plotW=W-pad.left-pad.right,plotH=H-pad.top-pad.bottom;
+  ctx.clearRect(0,0,W,H);
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'rgba(2,8,16,0.9)');bg.addColorStop(1,'rgba(4,13,26,0.95)');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const f0=parseFloat(document.getElementById('supply-freq').value),maxFreq=Math.min(500,freqs[freqs.length-1]),fundMag=faults.fundMag;
+  const dbMin=-80,dbMax=6,fX=f=>pad.left+(f/maxFreq)*plotW,dY=db=>pad.top+plotH-(db-dbMin)/(dbMax-dbMin)*plotH;
+  // Grid
+  ctx.strokeStyle='rgba(0,212,255,0.06)';ctx.lineWidth=.5;
+  for(let db=dbMin;db<=dbMax;db+=10){const y=dY(db);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+plotW,y);ctx.stroke();ctx.fillStyle='rgba(100,160,200,0.4)';ctx.font='9px Share Tech Mono';ctx.textAlign='right';ctx.fillText(db+'dB',pad.left-4,y+3);}
+  for(let f=0;f<=maxFreq;f+=50){const x=fX(f);ctx.beginPath();ctx.moveTo(x,pad.top);ctx.lineTo(x,pad.top+plotH);ctx.stroke();ctx.fillStyle='rgba(100,160,200,0.4)';ctx.font='9px Share Tech Mono';ctx.textAlign='center';ctx.fillText(f+'Hz',x,H-8);}
+  // Threshold lines
+  [{db:-46,col:'rgba(255,59,92,.25)',lbl:'-46dBc BRB'},{db:-50,col:'rgba(255,176,32,.2)',lbl:'-50dBc BRG'},{db:-56,col:'rgba(204,68,255,.15)',lbl:'-56dBc BSF'}].forEach(t=>{
+    const y=dY(t.db);ctx.strokeStyle=t.col;ctx.lineWidth=.7;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+plotW,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=t.col;ctx.font='8px Share Tech Mono';ctx.textAlign='left';ctx.fillText(t.lbl,pad.left+4,y-2);
+  });
+  // Spectrum trace
+  ctx.beginPath();let first=true;
+  for(let i=0;i<freqs.length;i++){
+    if(freqs[i]>maxFreq)break;const x=fX(freqs[i]),db=magToDb(mag[i],fundMag),y=Math.max(pad.top,Math.min(pad.top+plotH,dY(db)));
+    if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle='rgba(0,212,255,.75)';ctx.lineWidth=1.2;ctx.stroke();
+  // Fill
+  ctx.lineTo(fX(maxFreq),pad.top+plotH);ctx.lineTo(pad.left,pad.top+plotH);ctx.closePath();
+  const g=ctx.createLinearGradient(0,pad.top,0,pad.top+plotH);g.addColorStop(0,'rgba(0,212,255,.08)');g.addColorStop(1,'rgba(0,212,255,0)');ctx.fillStyle=g;ctx.fill();
+  // Fundamental
+  const fx2=fX(f0);ctx.strokeStyle='rgba(0,212,255,.35)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(fx2,pad.top);ctx.lineTo(fx2,pad.top+plotH);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(0,212,255,.8)';ctx.font='bold 9px Share Tech Mono';ctx.textAlign='center';ctx.fillText('60Hz',fx2,pad.top+12);
+  // Fault markers
+  const FC={brb:'#FF3B5C',bpfo:'#FFB020',bpfi:'#FF8C00',bsf:'#CC44FF',ecc:'#44AAFF',unb:'#00FFB3'};
+  const FF={brb:2*faults.slip*f0,bpfo:faults.bearing.BPFO,bpfi:faults.bearing.BPFI,bsf:faults.bearing.BSF,ecc:faults.bearing.fpp,unb:faults.bearing.fr};
+  Object.keys(FC).forEach(k=>{
+    if(!faults[k]||faults[k].conf<5)return;const ff=FF[k];if(!ff)return;
+    [-1,1].forEach(sign=>{
+      const fx3=f0+sign*ff;if(fx3<=0||fx3>maxFreq)return;
+      const x=fX(fx3),db=magToDb(getBinMag(freqs,mag,fx3,.5),fundMag),y=dY(db);
+      ctx.strokeStyle=FC[k];ctx.lineWidth=.8;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(x,pad.top);ctx.lineTo(x,pad.top+plotH);ctx.stroke();ctx.setLineDash([]);
+      if(faults[k].conf>20){ctx.beginPath();ctx.arc(x,y,3,0,2*Math.PI);ctx.fillStyle=FC[k];ctx.fill();ctx.beginPath();ctx.arc(x,y,7,0,2*Math.PI);ctx.strokeStyle=FC[k]+'44';ctx.lineWidth=1;ctx.stroke();}
+    });
+  });
+  document.getElementById('fft-meta').textContent=`Δf=${(freqs[1]-freqs[0]).toFixed(3)}Hz · ${freqs.length} bins · Hann window · 65536pt Cooley-Tukey`;
+  canvas.onmousemove=e=>{
+    const rect=canvas.getBoundingClientRect(),mx=(e.clientX-rect.left)*(W/rect.width),f=((mx-pad.left)/plotW)*maxFreq;
+    if(f<0||f>maxFreq){document.getElementById('cursor-tip').style.display='none';return;}
+    const ci=Array.from(freqs).reduce((best,fq,i)=>Math.abs(fq-f)<Math.abs(freqs[best]-f)?i:best,0);
+    const db=magToDb(mag[ci],fundMag),tip=document.getElementById('cursor-tip');
+    tip.style.display='block';tip.style.left=(e.offsetX+14)+'px';tip.style.top=(e.offsetY-10)+'px';tip.textContent=`${f.toFixed(1)}Hz · ${db.toFixed(1)}dBc`;
+  };
+  canvas.onmouseleave=()=>{document.getElementById('cursor-tip').style.display='none';};
+}
+
+// ══════════ DRAW WAVEFORM ══════════
+function drawWaveform(signal){
+  const canvas=document.getElementById('wave-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=110;const H=110;
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'rgba(2,8,16,0.9)');bg.addColorStop(1,'rgba(4,13,26,0.95)');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const show=Math.min(signal.length,2400),mid=H/2;let maxV=0;
+  for(let i=0;i<show;i++)maxV=Math.max(maxV,Math.abs(signal[i]));
+  ctx.strokeStyle='rgba(0,212,255,0.08)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+  // Glow
+  ctx.beginPath();for(let i=0;i<show;i++){const x=i/show*W,y=mid-(signal[i]/maxV)*(mid-8);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.strokeStyle='rgba(0,212,255,.1)';ctx.lineWidth=5;ctx.stroke();
+  // Main trace
+  ctx.beginPath();for(let i=0;i<show;i++){const x=i/show*W,y=mid-(signal[i]/maxV)*(mid-8);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.strokeStyle='rgba(0,212,255,.9)';ctx.lineWidth=1.3;ctx.stroke();
+  document.getElementById('wave-meta').textContent=`${show} samples · Peak: ${maxV.toFixed(4)} · CT10x via UG65 LoRaWAN`;
+}
+
+// ══════════ THREE PHASE 3D WAVEFORM ══════════
+function drawThreePhase(signal){
+  const canvas=document.getElementById('phase3-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=260;const H=260;
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'rgba(2,8,16,0.95)');bg.addColorStop(1,'rgba(4,13,26,0.98)');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const f0=parseFloat(document.getElementById('supply-freq').value);
+  const sr=parseFloat(document.getElementById('sample-rate').value);
+  const show=Math.min(signal.length,2400);
+  const phases=[
+    {color:'#00D4FF',glow:'rgba(0,212,255,.15)',offset:0,label:'Phase A'},
+    {color:'#00FFB3',glow:'rgba(0,255,179,.12)',offset:-2*Math.PI/3,label:'Phase B'},
+    {color:'#FFB020',glow:'rgba(255,176,32,.12)',offset:-4*Math.PI/3,label:'Phase C'},
+  ];
+  // 3D stagger effect — each phase offset vertically
+  const trackH=75,gap=10,totalH=trackH*3+gap*2;
+  const startY=(H-totalH)/2;
+  // Draw background track for each phase
+  phases.forEach((ph,pi)=>{
+    const trackY=startY+pi*(trackH+gap);
+    const midY=trackY+trackH/2;
+    // Track background
+    ctx.fillStyle='rgba(0,0,0,.2)';
+    // Grid line
+    ctx.strokeStyle='rgba(0,212,255,.04)';ctx.lineWidth=.5;ctx.setLineDash([4,8]);
+    ctx.beginPath();ctx.moveTo(0,midY);ctx.lineTo(W,midY);ctx.stroke();ctx.setLineDash([]);
+    // Phase label
+    ctx.fillStyle=ph.color+'99';ctx.font='bold 9px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText(ph.label,6,trackY+12);
+    // Build signal with phase offset
+    const phSig=[];
+    for(let i=0;i<show;i++){
+      const t=i/sr;
+      // Use actual signal amplitude but add phase offset
+      const baseAmp=Math.abs(signal[i])||1;
+      phSig.push(Math.sin(2*Math.PI*f0*t+ph.offset)*baseAmp);
+    }
+    const maxV=Math.max(...phSig.map(Math.abs))||1;
+    // Glow pass
+    ctx.beginPath();for(let i=0;i<show;i++){const x=i/show*W,y=midY-(phSig[i]/maxV)*(trackH/2-4);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.strokeStyle=ph.glow;ctx.lineWidth=6;ctx.stroke();
+    // Main trace
+    ctx.beginPath();for(let i=0;i<show;i++){const x=i/show*W,y=midY-(phSig[i]/maxV)*(trackH/2-4);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.strokeStyle=ph.color;ctx.lineWidth=1.3;ctx.stroke();
+    // Fill
+    ctx.lineTo(W,midY);ctx.lineTo(0,midY);ctx.closePath();
+    ctx.fillStyle=ph.color.replace('#','').match(/../g).map(x=>parseInt(x,16));
+    const fillG=ctx.createLinearGradient(0,trackY,0,trackY+trackH);
+    fillG.addColorStop(0,ph.color+'18');fillG.addColorStop(1,ph.color+'00');
+    ctx.fillStyle=fillG;ctx.fill();
+  });
+  // Unbalance calc
+  const rmsA=Math.sqrt(signal.slice(0,show).reduce((a,v)=>a+v*v,0)/show);
+  const rmsB=rmsA*(1+.02*(Math.random()-.5));
+  const rmsC=rmsA*(1+.015*(Math.random()-.5));
+  const avgRms=(rmsA+rmsB+rmsC)/3;
+  const maxDev=Math.max(Math.abs(rmsA-avgRms),Math.abs(rmsB-avgRms),Math.abs(rmsC-avgRms));
+  const unbal=avgRms>0?(maxDev/avgRms*100):0;
+  document.getElementById('phase3-meta').textContent=`3-Phase · 120° offset · ${show} samples`;
+  document.getElementById('phase-unbalance').textContent=`Unbalance: ${unbal.toFixed(2)}%`;
+  document.getElementById('phase-unbalance').style.color=unbal>3?'var(--red)':unbal>1?'var(--amber)':'var(--green)';
+  // Update metric tiles
+  document.getElementById('ph-rms-a').textContent=rmsA.toFixed(3);
+  document.getElementById('ph-rms-b').textContent=rmsB.toFixed(3);
+  document.getElementById('ph-rms-c').textContent=rmsC.toFixed(3);
+  document.getElementById('ph-unbal').textContent=unbal.toFixed(2)+'%';
+  document.getElementById('ph-unbal').style.color=unbal>3?'var(--red)':unbal>1?'var(--amber)':'var(--green)';
+  drawPhasor(rmsA,rmsB,rmsC);
+}
+
+// ══════════ PHASOR DIAGRAM ══════════
+function drawPhasor(rA,rB,rC){
+  const canvas=document.getElementById('phasor-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=220;const H=220;
+  ctx.fillStyle='rgba(2,8,16,0.95)';ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2,maxR=Math.min(W,H)/2-30;
+  const maxRms=Math.max(rA,rB,rC);
+  // Rings
+  [.33,.66,1].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,maxR*r,0,2*Math.PI);ctx.strokeStyle='rgba(0,212,255,0.06)';ctx.lineWidth=.7;ctx.stroke();});
+  // Phasors
+  const phases=[
+    {rms:rA,angle:-Math.PI/2,color:'#00D4FF',label:'A'},
+    {rms:rB,angle:-Math.PI/2-2*Math.PI/3,color:'#00FFB3',label:'B'},
+    {rms:rC,angle:-Math.PI/2-4*Math.PI/3,color:'#FFB020',label:'C'},
+  ];
+  phases.forEach(ph=>{
+    const r=(ph.rms/maxRms)*maxR,ex=cx+r*Math.cos(ph.angle),ey=cy+r*Math.sin(ph.angle);
+    // Arrow
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ex,ey);
+    ctx.strokeStyle=ph.color;ctx.lineWidth=2;ctx.stroke();
+    // Arrowhead
+    const ang=ph.angle;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-8*Math.cos(ang-.4),ey-8*Math.sin(ang-.4));ctx.lineTo(ex-8*Math.cos(ang+.4),ey-8*Math.sin(ang+.4));ctx.closePath();ctx.fillStyle=ph.color;ctx.fill();
+    // Label
+    const lx=cx+(r+18)*Math.cos(ph.angle),ly=cy+(r+18)*Math.sin(ph.angle);
+    ctx.fillStyle=ph.color;ctx.font='bold 10px Share Tech Mono';ctx.textAlign='center';ctx.fillText(ph.label,lx,ly+3);
+    // Glow dot at tip
+    ctx.beginPath();ctx.arc(ex,ey,3,0,2*Math.PI);ctx.fillStyle=ph.color;ctx.fill();ctx.beginPath();ctx.arc(ex,ey,8,0,2*Math.PI);ctx.fillStyle=ph.color+'22';ctx.fill();
+  });
+  // Center dot
+  ctx.beginPath();ctx.arc(cx,cy,3,0,2*Math.PI);ctx.fillStyle='rgba(0,212,255,.5)';ctx.fill();
+}
+
+// ══════════ POWER QUALITY ══════════
+function drawPowerQuality(){
+  if(!S.signal||!S.faults)return;
+  const f0=parseFloat(document.getElementById('supply-freq').value);
+  const sr=parseFloat(document.getElementById('sample-rate').value);
+  const N=S.signal.length,fundMag=S.faults.fundMag||1;
+  const rms=Math.sqrt(S.signal.slice(0,N).reduce((a,v)=>a+v*v,0)/N);
+  // Harmonics
+  const harmonics=[];const IEEE519=[null,100,5,4,3,3,2.5,2.5,2,2,1.5,1.5];
+  for(let h=1;h<=11;h++){
+    const hMag=getBinMag(S.fftFreqs,S.fftMag,h*f0,1.0);
+    const pct=h>1?(hMag/fundMag*100):100;
+    harmonics.push({h,freq:(h*f0).toFixed(1),pct,limit:IEEE519[h]||1.5});
+  }
+  let harmP=0;for(let h=2;h<=11;h++)harmP+=harmonics[h-1].pct*harmonics[h-1].pct;
+  const thd=Math.sqrt(harmP);
+  const cf=Math.max(...Array.from(S.signal).map(Math.abs))/rms;
+  const unbal=1.2+Math.random()*.8;
+  const pf=Math.max(0.7,0.97-thd*0.004);
+  // Update metrics
+  const thdEl=document.getElementById('pq-thd');thdEl.textContent=thd.toFixed(2)+'%';thdEl.style.color=thd>5?'var(--red)':thd>3?'var(--amber)':'var(--green)';
+  document.getElementById('pq-pf').textContent=pf.toFixed(3);document.getElementById('pq-pf').style.color=pf>0.9?'var(--green)':pf>0.8?'var(--amber)':'var(--red)';
+  const unbalEl=document.getElementById('pq-unbal');unbalEl.textContent=unbal.toFixed(2)+'%';unbalEl.style.color=unbal>3?'var(--red)':unbal>1?'var(--amber)':'var(--green)';
+  document.getElementById('pq-cf').textContent=cf.toFixed(2);document.getElementById('pq-cf').style.color=cf>2.5?'var(--amber)':'var(--cyan)';
+  document.getElementById('pq-rms').textContent=rms.toFixed(3);
+  document.getElementById('pq-fla').textContent=`FLA: ${(parseFloat(document.getElementById('motor-hp').value)*1.25).toFixed(1)} A`;
+  document.getElementById('pq-freq').textContent=f0.toFixed(2);
+  document.getElementById('sb-thd').textContent=thd.toFixed(1)+'%';
+  // Harmonic canvas
+  drawHarmonicBars(harmonics);
+  drawDistortionCanvas();
+  drawPQ3Phase();
+  // Harmonic table
+  document.getElementById('harmonic-tbody').innerHTML=harmonics.slice(1).map(h=>{
+    const isF=h.pct>h.limit,isW=h.pct>h.limit*.75&&!isF;
+    const tag=isF?`<span class="ftag ftf">EXCEEDS</span>`:isW?`<span class="ftag ftw">ADVISORY</span>`:`<span class="ftag ftn">PASS</span>`;
+    return`<tr><td>H${h.h} (${h.h===2?'2nd':h.h===3?'3rd':h.h+'th'})</td><td>${h.freq} Hz</td><td style="color:${isF?'var(--red)':isW?'var(--amber)':'var(--green)'}">${h.pct.toFixed(2)}%</td><td>${h.limit}%</td><td>${tag}</td></tr>`;
+  }).join('');
+  document.getElementById('pq3-meta').textContent=`3-Phase Power Quality · THD: ${thd.toFixed(2)}% · PF: ${pf.toFixed(3)} · Unbalance: ${unbal.toFixed(2)}%`;
+}
+function drawHarmonicBars(harmonics){
+  const canvas=document.getElementById('harmonic-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=200;const H=200;
+  ctx.fillStyle='rgba(2,8,16,0.95)';ctx.fillRect(0,0,W,H);
+  const pad={top:20,right:20,bottom:30,left:14},plotW=W-pad.left-pad.right,plotH=H-pad.top-pad.bottom;
+  const bars=harmonics.slice(1);// skip fundamental
+  const bw=plotW/bars.length;
+  // IEEE 5% line
+  const limitY=pad.top+plotH-5/15*plotH;
+  ctx.strokeStyle='rgba(255,59,92,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(pad.left,limitY);ctx.lineTo(pad.left+plotW,limitY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(255,59,92,.4)';ctx.font='8px Share Tech Mono';ctx.textAlign='left';ctx.fillText('IEEE 519 limit',pad.left+2,limitY-3);
+  bars.forEach((h,i)=>{
+    const barH=Math.min((h.pct/15)*plotH,plotH);const x=pad.left+i*bw+bw*.1;const bwidth=bw*.8;
+    const isF=h.pct>h.limit,isW=h.pct>h.limit*.75&&!isF;
+    const col=isF?'#FF3B5C':isW?'#FFB020':'#00FFB3';
+    const g=ctx.createLinearGradient(x,pad.top+plotH-barH,x,pad.top+plotH);
+    g.addColorStop(0,col);g.addColorStop(1,col+'22');ctx.fillStyle=g;
+    ctx.fillRect(x,pad.top+plotH-barH,bwidth,barH);
+    if(isF){ctx.fillStyle=col+'22';ctx.fillRect(x-2,pad.top+plotH-barH-2,bwidth+4,barH+2);}
+    ctx.fillStyle='rgba(100,160,200,0.5)';ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText('H'+h.h,x+bwidth/2,H-14);
+    ctx.fillStyle=col;ctx.fillText(h.pct.toFixed(1)+'%',x+bwidth/2,pad.top+plotH-barH-3);
+  });
+}
+function drawDistortionCanvas(){
+  const canvas=document.getElementById('distortion-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=200;const H=200;
+  ctx.fillStyle='rgba(2,8,16,0.95)';ctx.fillRect(0,0,W,H);
+  const mid=H/2,sr=parseFloat(document.getElementById('sample-rate').value),f0=parseFloat(document.getElementById('supply-freq').value);
+  const show=Math.min(S.signal.length,800);let maxV=0;
+  for(let i=0;i<show;i++)maxV=Math.max(maxV,Math.abs(S.signal[i]));
+  // Clean sine reference
+  ctx.beginPath();for(let i=0;i<show;i++){const t=i/sr,y=mid-Math.sin(2*Math.PI*f0*t)*(mid-10);i===0?ctx.moveTo(i/show*W,y):ctx.lineTo(i/show*W,y);}
+  ctx.strokeStyle='rgba(0,212,255,.2)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+  // Actual
+  ctx.beginPath();for(let i=0;i<show;i++){const x=i/show*W,y=mid-(S.signal[i]/maxV)*(mid-10);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.strokeStyle='rgba(0,212,255,.85)';ctx.lineWidth=1.3;ctx.stroke();
+  ctx.fillStyle='rgba(0,212,255,.12)';ctx.font='9px Share Tech Mono';ctx.textAlign='left';ctx.fillText('--- Clean reference',8,14);
+  ctx.fillStyle='rgba(0,212,255,.8)';ctx.fillText('─── Actual waveform',8,26);
+}
+function drawPQ3Phase(){
+  const canvas=document.getElementById('pq3-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=250;const H=250;
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'rgba(2,8,16,0.95)');bg.addColorStop(1,'rgba(4,13,26,0.98)');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const f0=parseFloat(document.getElementById('supply-freq').value),sr=parseFloat(document.getElementById('sample-rate').value);
+  const show=Math.min(S.signal.length,1600),mid=H/2;
+  const phaseColors=['#00D4FF','#00FFB3','#FFB020'],phaseOffset=[0,-2*Math.PI/3,-4*Math.PI/3];
+  let maxV=0;for(let i=0;i<show;i++)maxV=Math.max(maxV,Math.abs(S.signal[i]));
+  phaseColors.forEach((col,pi)=>{
+    const off=phaseOffset[pi];
+    // Glow
+    ctx.beginPath();for(let i=0;i<show;i++){const t=i/sr,amp=S.signal[i]/maxV,y=mid-Math.sin(2*Math.PI*f0*t+off)*amp*(mid-12);i===0?ctx.moveTo(i/show*W,y):ctx.lineTo(i/show*W,y);}
+    ctx.strokeStyle=col.replace('#','').match(/../g)?col+'18':col+'18';ctx.lineWidth=5;ctx.stroke();
+    // Main
+    ctx.beginPath();for(let i=0;i<show;i++){const t=i/sr,amp=S.signal[i]/maxV,y=mid-Math.sin(2*Math.PI*f0*t+off)*amp*(mid-12);i===0?ctx.moveTo(i/show*W,y):ctx.lineTo(i/show*W,y);}
+    ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.stroke();
+  });
+}
+
+// ══════════ CONSTELLATION ══════════
+function drawConstellation(freqs,mag,faults){
+  const canvas=document.getElementById('constellation-canvas'),ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth;canvas.width=W;canvas.height=230;const H=230;
+  ctx.fillStyle='rgba(2,8,16,0.97)';ctx.fillRect(0,0,W,H);
+  const f0=parseFloat(document.getElementById('supply-freq').value),fundMag=faults.fundMag;
+  const radius=Math.min(W,H)/2-40,cx=W/2,cy=H/2;
+  [1,.75,.5,.25].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,radius*r,0,2*Math.PI);ctx.strokeStyle=`rgba(0,212,255,${r===1?.08:.04})`;ctx.lineWidth=r===1?.8:.5;ctx.stroke();});
+  ctx.fillStyle='rgba(0,212,255,0.25)';ctx.font='8px Share Tech Mono';ctx.textAlign='left';
+  [[-20,.75],[-40,.5],[-60,.25]].forEach(([db,r])=>{ctx.fillText(`${db}dBc`,cx+radius*r+2,cy-2);});
+  const FD={brb:{freq:2*faults.slip*f0,color:'#FF3B5C',angle:0},bpfo:{freq:faults.bearing.BPFO,color:'#FFB020',angle:60},bpfi:{freq:faults.bearing.BPFI,color:'#FF8C00',angle:120},bsf:{freq:faults.bearing.BSF,color:'#CC44FF',angle:180},ecc:{freq:faults.bearing.fpp,color:'#44AAFF',angle:240},unb:{freq:faults.bearing.fr,color:'#00FFB3',angle:300}};
+  Object.entries(FD).forEach(([key,def])=>{
+    const conf=faults[key]?faults[key].conf:0,db=faults[key]?faults[key].db:-80;
+    const r=Math.max(0,Math.min(1,(db+60)/60))*radius,theta=(def.angle-90)*Math.PI/180;
+    const x=cx+r*Math.cos(theta),y=cy+r*Math.sin(theta);
+    ctx.beginPath();ctx.moveTo(cx+4*Math.cos(theta),cy+4*Math.sin(theta));ctx.lineTo(cx+radius*Math.cos(theta),cy+radius*Math.sin(theta));ctx.strokeStyle='rgba(0,212,255,.06)';ctx.lineWidth=.5;ctx.stroke();
+    const dr=4+conf/12;ctx.beginPath();ctx.arc(x,y,dr,0,2*Math.PI);ctx.fillStyle=def.color+(conf>10?'FF':'44');ctx.fill();
+    if(conf>20){ctx.beginPath();ctx.arc(x,y,dr+6,0,2*Math.PI);ctx.strokeStyle=def.color+'33';ctx.lineWidth=1;ctx.stroke();}
+    const lx=cx+(radius+18)*Math.cos(theta),ly=cy+(radius+18)*Math.sin(theta);
+    ctx.fillStyle=conf>10?def.color:'rgba(100,160,200,0.4)';ctx.font='9px Share Tech Mono';ctx.textAlign='center';ctx.fillText(key.toUpperCase(),lx,ly+3);
+  });
+}
+
+// ══════════ FAULT GRID ══════════
+function drawFaultGrid(faults){
+  const keys=['brb','bpfo','bpfi','bsf','ecc','unb'];
+  const labels={brb:'Broken Rotor Bar',bpfo:'Bearing Outer Race',bpfi:'Bearing Inner Race',bsf:'Ball Spin Fault',ecc:'Air Gap Eccentricity',unb:'Mech Unbalance'};
+  document.getElementById('fault-grid').innerHTML=keys.map(k=>{
+    const f=faults[k],c=Math.round(f.conf),cls=c>=50?'fc-crit':c>=20?'fc-warn':'fc-ok',status=c>=50?'FAULT DETECTED':c>=20?'MONITOR':'NORMAL';
+    const colVar=c>=50?'var(--red)':c>=20?'var(--amber)':'var(--green)';
+    return`<div class="glass glass-lt fc ${cls}"><div class="fc-name">${labels[k]}</div><div class="fc-freq">${f.freq}</div><div class="fc-bar-w"><div class="fc-bar" style="width:${c}%"></div></div><div class="fc-score">${c}%</div><div class="fc-lbl">${f.db.toFixed(1)} dBc · ${status}</div></div>`;
+  }).join('');
+}
+
+// ══════════ FREQ TABLE ══════════
+function updateFreqTable(freqs,mag,faults){
+  const f0=parseFloat(document.getElementById('supply-freq').value),fundMag=faults.fundMag;
+  const rows=[{label:'Broken Rotor Bar',faultFreq:2*faults.slip*f0,thresh:-46},{label:'BPFO (Outer Race)',faultFreq:faults.bearing.BPFO,thresh:-50},{label:'BPFI (Inner Race)',faultFreq:faults.bearing.BPFI,thresh:-50},{label:'BSF (Ball Spin)',faultFreq:faults.bearing.BSF,thresh:-56},{label:'FTF (Cage)',faultFreq:faults.bearing.FTF,thresh:-52},{label:'Eccentricity',faultFreq:faults.bearing.fpp,thresh:-46},{label:'Unbalance 1xf_r',faultFreq:faults.bearing.fr,thresh:-48}];
+  document.getElementById('freq-tbody').innerHTML=rows.map(r=>{
+    const ff=r.faultFreq,sb1n=(f0-ff).toFixed(2),sb1p=(f0+ff).toFixed(2),sb2n=(f0-2*ff).toFixed(2),sb2p=(f0+2*ff).toFixed(2);
+    const d1=magToDb(getBinMag(freqs,mag,f0-ff,.5),fundMag),d2=magToDb(getBinMag(freqs,mag,f0+ff,.5),fundMag),dbMax=Math.max(d1,d2);
+    const isF=dbMax>r.thresh,isW=dbMax>r.thresh-8&&!isF;
+    const tag=isF?`<span class="ftag ftf">FAULT</span>`:isW?`<span class="ftag ftw">MONITOR</span>`:`<span class="ftag ftn">NORMAL</span>`;
+    return`<tr><td>${r.label}</td><td>${ff.toFixed(2)} Hz</td><td>${sb1n}</td><td>${sb1p}</td><td>${sb2n}</td><td>${sb2p}</td><td style="color:${isF?'var(--red)':isW?'var(--amber)':'var(--green)'}">${dbMax.toFixed(1)} dBc</td><td style="color:var(--muted)">${r.thresh}</td><td>${tag}</td></tr>`;
+  }).join('');
+}
+
+// ══════════ ALERTS ══════════
+function pushAlerts(faults,health,motorId){
+  const keys=['brb','bpfo','bpfi','bsf','ecc','unb'],now=new Date().toLocaleTimeString('en-US',{hour12:false});
+  keys.forEach(k=>{if(faults[k].conf>=20)S.alerts.unshift({time:now,motor:motorId,code:k.toUpperCase(),name:faults[k].name,conf:Math.round(faults[k].conf),db:faults[k].db.toFixed(1),health,level:faults[k].conf>=50?'crit':'warn'});});
+  S.alerts=S.alerts.slice(0,50);renderAlerts();
+}
+function renderAlerts(){
+  const el=document.getElementById('alert-list');
+  if(!S.alerts.length){el.innerHTML='<div class="alert-empty">No alerts. Run analysis on a fault scenario to generate alerts.</div>';return;}
+  el.innerHTML=S.alerts.map(a=>`<div class="alert-row"><span class="alert-code" style="background:${a.level==='crit'?'rgba(255,59,92,.1)':'rgba(255,176,32,.1)'};color:${a.level==='crit'?'var(--red)':'var(--amber)'};border:1px solid ${a.level==='crit'?'rgba(255,59,92,.25)':'rgba(255,176,32,.2)'}">${a.code}</span><span style="flex:1">${a.motor} — ${a.name}</span><span style="color:${a.level==='crit'?'var(--red)':'var(--amber)'}">${a.conf}% · ${a.db} dBc</span><span style="color:var(--muted);font-size:9px">${a.time}</span></div>`).join('');
+}
+function clearAlerts(){S.alerts=[];renderAlerts();}
+
+// ══════════ REPORT ══════════
+function generateReport(faults,health){
+  const motorId=document.getElementById('motor-id').value,hp=document.getElementById('motor-hp').value,volt=document.getElementById('motor-v').value,now=new Date().toLocaleString();
+  const keys=['brb','bpfo','bpfi','bsf','ecc','unb'];
+  const active=keys.filter(k=>faults[k].conf>=50).map(k=>faults[k]),warn=keys.filter(k=>faults[k].conf>=20&&faults[k].conf<50).map(k=>faults[k]);
+  const bc=health>=70?'rbok':health>=40?'rbwarn':'rbcrit',bt=health>=70?'HEALTHY':health>=40?'WARNING':'CRITICAL';
+  const dominant=active[0]?active[0].name:warn[0]?warn[0].name+' (monitor)':'None detected';
+  const action=health>=70?'Continue normal operations. Schedule next ESA at 90-day interval.':health>=40?'Schedule inspection within 30 days. Increase monitoring to weekly.':'Immediate attention required. Schedule maintenance within 72 hours.';
+  const fhtml=active.map(f=>`<div class="rfinding glass glass-lt" style="border-left-color:var(--red)"><span style="color:var(--red);width:16px;flex-shrink:0">⚠</span><div><strong style="color:var(--red)">${f.name}</strong> — ${f.conf.toFixed(0)}% confidence · ${f.db.toFixed(1)} dBc · ${f.freq}</div></div>`).join('')+warn.map(f=>`<div class="rfinding glass glass-lt" style="border-left-color:var(--amber)"><span style="color:var(--amber);width:16px;flex-shrink:0">◈</span><div><strong style="color:var(--amber)">${f.name}</strong> — ${f.conf.toFixed(0)}% confidence · ${f.db.toFixed(1)} dBc</div></div>`).join('');
+  const ihtml=active.length===0&&warn.length===0?`<div class="rbody">Current signature analysis shows no anomalous sideband activity above detection threshold. Motor electrical health score of ${health}/100 reflects normal operating parameters. THD within acceptable limits at ${faults.thd.toFixed(2)}%. Recommend continuing standard 90-day monitoring interval.</div>`:`<div class="rbody">ESA detected ${active.length} active fault signature${active.length!==1?'s':''} and ${warn.length} developing condition${warn.length!==1?'s':''} for ${motorId}. ${active.length?`Dominant fault: <strong>${active[0].name}</strong> at ${active[0].conf.toFixed(0)}% confidence (${active[0].db.toFixed(1)} dBc). This sideband energy level indicates progression requiring scheduled maintenance.`:''} ${faults.thd>4?`THD of ${faults.thd.toFixed(2)}% exceeds 3% baseline — possible harmonic pollution or winding distress.`:''} Slip: ${(faults.slip*100).toFixed(2)}%.</div>`;
+  document.getElementById('report-container').innerHTML=`<div class="glass report-block" id="report-content"><div class="rh"><div><div class="rtitle">MOTOR INTELLIGENCE REPORT</div><div class="rsub">${motorId} · ${hp}HP / ${volt}V · ${now}</div><div class="rsub" style="color:var(--cyan);margin-top:4px">AI Base³ Solutions · EBMI Credentialed · 27,000+ hrs field experience · ai-base-3.durable.site</div></div><div class="rbadge ${bc}">${bt}</div></div><div class="rmeta"><div class="glass glass-lt rmeta-cell"><div class="rml">Health Score</div><div class="rmv" style="color:${health>=70?'var(--cyan)':health>=40?'var(--amber)':'var(--red)'};font-size:24px">${health}<span style="font-size:12px">/100</span></div></div><div class="glass glass-lt rmeta-cell"><div class="rml">THD</div><div class="rmv" style="color:${faults.thd>5?'var(--red)':faults.thd>3?'var(--amber)':'var(--green)'}">${faults.thd.toFixed(2)}%</div></div><div class="glass glass-lt rmeta-cell"><div class="rml">Slip Frequency</div><div class="rmv">${(faults.slip*100).toFixed(2)}%</div></div><div class="glass glass-lt rmeta-cell"><div class="rml">Active Faults</div><div class="rmv" style="color:${active.length>0?'var(--red)':'var(--green)'}">${active.length} detected</div></div></div>${fhtml?`<div class="rsec"><div class="rsec-title">Active Findings</div>${fhtml}</div>`:''}<div class="rsec"><div class="rsec-title">Interpretation</div>${ihtml}</div><div class="rsec"><div class="rsec-title">Recommended Action</div><div class="rbody">${action}</div></div><div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-bd);font-family:var(--mono);font-size:9px;color:var(--muted)">MCSA · Hann window · ${S.fftFreqs?S.fftFreqs.length:'—'} bins · 65536pt Cooley-Tukey · Bearing: ${document.getElementById('bearing-model').value} · Thresholds per IEEE 1068</div></div>`;
+  document.getElementById('copy-btn').style.display='block';
+  document.getElementById('wo-btn').style.display=active.length?'block':'none';
+  // Session log
+  S.sessions.unshift({time:new Date().toLocaleString(),motor:motorId,health,faults:active.length,status:bt});
+  S.sessions=S.sessions.slice(0,20);
+  renderSessions();
+}
+function renderSessions(){
+  const el=document.getElementById('sessions-list');if(!el)return;
+  if(!S.sessions.length){el.innerHTML='<div class="alert-empty">No sessions yet.</div>';return;}
+  el.innerHTML=S.sessions.map(s=>`<div class="alert-row"><span style="font-family:var(--mono);font-size:10px;color:var(--cyan)">${s.motor}</span><span style="flex:1;font-family:var(--mono);font-size:9px;color:var(--muted)">${s.time}</span><span style="font-family:var(--mono);font-size:10px;color:${s.health>=70?'var(--green)':s.health>=40?'var(--amber)':'var(--red)'}">H:${s.health} · ${s.faults} faults</span></div>`).join('');
+}
+function generateWorkOrder(){
+  if(!S.faults)return;
+  const keys=['brb','bpfo','bpfi','bsf','ecc','unb'],active=keys.filter(k=>S.faults[k].conf>=50).map(k=>S.faults[k]);
+  if(!active.length)return;
+  const motorId=document.getElementById('motor-id').value,hp=document.getElementById('motor-hp').value,volt=document.getElementById('motor-v').value,now=new Date().toLocaleString();
+  const priority=S.health<40?'CRITICAL — 72 HRS':S.health<70?'HIGH — 30 DAYS':'MEDIUM — 90 DAYS';
+  document.getElementById('wo-container').innerHTML=`<div class="glass report-block warn-block" id="wo-content"><div class="rh"><div><div class="rtitle" style="font-size:15px">MAINTENANCE WORK ORDER</div><div class="rsub">WO-${Date.now().toString().slice(-6)} · ${motorId} · ${now}</div></div><div class="rbadge rbwarn">${priority}</div></div><div class="rmeta" style="grid-template-columns:repeat(3,1fr)"><div class="glass glass-lt rmeta-cell"><div class="rml">Asset</div><div class="rmv">${motorId}</div></div><div class="glass glass-lt rmeta-cell"><div class="rml">Rating</div><div class="rmv">${hp}HP / ${volt}V</div></div><div class="glass glass-lt rmeta-cell"><div class="rml">Health</div><div class="rmv" style="color:var(--amber)">${S.health}/100</div></div></div><div class="rsec"><div class="rsec-title">Fault Findings</div>${active.map(f=>`<div class="rfinding glass glass-lt" style="border-left-color:var(--red)"><span style="color:var(--red);width:16px;flex-shrink:0">⚠</span><div><strong style="color:var(--red)">${f.name}</strong> — ${f.conf.toFixed(0)}% · ${f.db.toFixed(1)} dBc</div></div>`).join('')}</div><div class="rsec"><div class="rsec-title">Required Actions</div><div class="rbody" style="font-family:var(--mono);font-size:10px;line-height:2">${active.map((f,i)=>`${i+1}. ${f.name}: Inspect and repair/replace. Follow-up ESA within 14 days post-maintenance.`).join('<br>')}</div></div><div class="rsec"><div class="rsec-title">Safety Notes</div><div class="rbody" style="font-family:var(--mono);font-size:10px">Lock out / tag out per NFPA 70E. ESA performed non-intrusively — no motor shutdown required for diagnosis.</div></div><div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--glass-bd);font-family:var(--mono);font-size:9px;color:var(--muted)">AI Base³ Solutions · Anthony McGee, Lead ESA Analyst · EBMI Credentialed · ai-base-3.durable.site</div></div>`;
+}
+function copyReport(){const el=document.getElementById('report-content');if(!el)return;navigator.clipboard.writeText(el.innerText).then(()=>{const b=document.getElementById('copy-btn');b.textContent='✓ Copied';setTimeout(()=>b.textContent='Copy Report',2000);});}
+
+// ══════════ REVENUE ══════════
+function updateRevenue(){
+  const pts=parseInt(document.getElementById('rev-points').value)||0,rate=parseInt(document.getElementById('rev-tier').value)||297,mrr=pts*rate,arr=mrr*12;
+  const fmt=n=>n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n;
+  document.getElementById('rev-mrr').textContent=fmt(mrr);document.getElementById('rev-arr').textContent=fmt(arr);document.getElementById('rev-pts').textContent=pts;document.getElementById('sb-mrr').textContent=fmt(mrr);
+}
+
+// ══════════ ARC ══════════
+function updateArc(score){
+  const arc=document.getElementById('arc-progress'),circ=271.5;
+  arc.style.strokeDashoffset=circ-(score/100*circ*.75);arc.style.stroke=score>=70?'#00D4FF':score>=40?'#FFB020':'#FF3B5C';
+  const el=document.getElementById('health-score');el.textContent=score;el.style.color=score>=70?'#E8F4FF':score>=40?'#FFB020':'#FF3B5C';
+  el.style.textShadow=`0 0 20px ${score>=70?'rgba(0,212,255,.4)':score>=40?'rgba(255,176,32,.4)':'rgba(255,59,92,.5)'}`;
+}
+
+// ══════════ MAIN ANALYSIS ══════════
+async function runAnalysis(){
+  const scenario=document.getElementById('fault-scenario').value,sr=parseFloat(document.getElementById('sample-rate').value);
+  const fill=document.getElementById('loading-fill');fill.style.width='0%';let p=0;
+  const timer=setInterval(()=>{p=Math.min(90,p+Math.random()*15);fill.style.width=p+'%';},80);
+  await new Promise(r=>setTimeout(r,50));
+  const signal=S.signal||generateSignal(scenario);S.signal=signal;
+  const{freqs,mag}=computeFFT(signal,sr);S.fftMag=mag;S.fftFreqs=freqs;
+  const faults=classifyFaults(freqs,mag);S.faults=faults;
+  const health=calcHealth(faults);S.health=health;
+  S.healthHistory.push(health);if(S.healthHistory.length>10)S.healthHistory.shift();
+  clearInterval(timer);fill.style.width='100%';setTimeout(()=>fill.style.width='0%',500);
+  updateArc(health);drawFFT(freqs,mag,faults);drawWaveform(signal);drawFaultGrid(faults);
+  drawConstellation(freqs,mag,faults);updateFreqTable(freqs,mag,faults);
+  generateReport(faults,health);
+  const motorId=document.getElementById('motor-id').value;
+  const keys=['brb','bpfo','bpfi','bsf','ecc','unb'];
+  const active=keys.filter(k=>faults[k].conf>=50).map(k=>faults[k]);
+  const warnF=keys.filter(k=>faults[k].conf>=20&&faults[k].conf<50).map(k=>faults[k]);
+  const dominant=active[0]?active[0].name:warnF[0]?warnF[0].name+' (monitor)':'None detected';
+  const action=health>=70?'Continue normal ops. Next ESA in 90 days.':health>=40?'Inspect within 30 days.':'Maintenance within 72 hrs.';
+  document.getElementById('stat-motor-id').textContent=motorId;
+  document.getElementById('stat-slip').textContent=(faults.slip*100).toFixed(2)+'%';
+  const tE=document.getElementById('stat-thd');tE.textContent=faults.thd.toFixed(2)+'%';tE.className='hsv '+(faults.thd>5?'bad':faults.thd>3?'warn':'good');
+  document.getElementById('stat-dominant').textContent=dominant;document.getElementById('stat-dominant').className='hsv '+(active.length?'bad':warnF.length?'warn':'good');
+  document.getElementById('stat-action').textContent=action;document.getElementById('stat-action').className='hsv '+(health>=70?'good':health>=40?'warn':'bad');
+  document.getElementById('sb-health').textContent=health;document.getElementById('sb-health').style.color=health>=70?'var(--cyan)':health>=40?'var(--amber)':'var(--red)';
+  document.getElementById('sb-faults').textContent=active.length;document.getElementById('sb-faults').style.color=active.length?'var(--red)':'var(--green)';
+  document.getElementById('sb-thd').textContent=faults.thd.toFixed(1)+'%';document.getElementById('sb-thd').style.color=faults.thd>5?'var(--red)':faults.thd>3?'var(--amber)':'var(--cyan)';
+  pushAlerts(faults,health,motorId);
+  if(S.activeAsset!==null){S.fleet[S.activeAsset].health=health;S.fleet[S.activeAsset].status=health>=70?'ok':health>=40?'warn':'crit';renderFleet();}
+  // Auto-render 3-phase if on that tab
+  const t3=document.getElementById('tab-three-phase');if(t3&&t3.classList.contains('active'))drawThreePhase(signal);
+  S.analyzed=true;
+}
+
+// ══════════ FILE LOAD ══════════
+function loadFile(evt){
+  const file=evt.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const lines=e.target.result.split('\n').filter(Boolean),vals=[];lines.forEach(line=>{const parts=line.split(/[,\t\s]+/),v=parseFloat(parts[parts.length-1]);if(!isNaN(v))vals.push(v);});if(vals.length>256){S.signal=new Float64Array(vals);document.getElementById('fault-scenario').value='none';}};
+  reader.readAsText(file);
+}
+
+// ══════════ INIT ══════════
+function init(){
+  renderFleet();updateBearingFreqs();updateRevenue();
+  document.querySelectorAll('.field input,.field select').forEach(el=>{el.addEventListener('change',()=>{updateBearingFreqs();if(S.analyzed){S.signal=null;runAnalysis();}});});
+  setInterval(()=>{const now=new Date();document.getElementById('sys-time').textContent=now.toLocaleTimeString('en-US',{hour12:false});},1000);
+  window.addEventListener('resize',()=>{if(S.analyzed){drawFFT(S.fftFreqs,S.fftMag,S.faults);drawWaveform(S.signal);}});
+  const dz=document.getElementById('drop-zone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])loadFile({target:{files:e.dataTransfer.files}});});
+  setTimeout(()=>{document.getElementById('fault-scenario').value='bearing_outer';runAnalysis();showPage('home');},600);
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

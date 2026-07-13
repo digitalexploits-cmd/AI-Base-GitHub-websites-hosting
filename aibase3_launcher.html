@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Base³ Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;400;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:     #020810;
+  --deep:     #040D1A;
+  --glass:    rgba(6,18,38,0.6);
+  --glass-lt: rgba(10,30,60,0.35);
+  --bd:       rgba(0,180,255,0.14);
+  --bd2:      rgba(0,180,255,0.07);
+  --cyan:     #00D4FF;
+  --cyan2:    #00EEFF;
+  --blue:     #0055CC;
+  --green:    #00FFB3;
+  --amber:    #FFB020;
+  --red:      #FF3B5C;
+  --white:    #E8F4FF;
+  --muted:    rgba(100,160,200,0.5);
+  --exo:      'Exo 2', sans-serif;
+  --mono:     'Share Tech Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--void);
+  color: var(--white);
+  font-family: var(--exo);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PARTICLE BG ── */
+#bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* ── SCAN LINES ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 6px);
+  pointer-events: none; z-index: 1;
+}
+
+/* ── SHELL ── */
+.shell { position: relative; z-index: 2; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── HEADER ── */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 62px;
+  background: rgba(2,8,16,0.88);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--bd);
+  position: sticky; top: 0; z-index: 100;
+}
+.logo-gem {
+  width: 38px; height: 38px;
+  border: 1.5px solid var(--cyan); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,212,255,0.07);
+  box-shadow: 0 0 18px rgba(0,212,255,0.18), inset 0 1px 0 rgba(0,212,255,0.2);
+  margin-right: 12px; flex-shrink: 0;
+  animation: gemshine 3s ease-in-out infinite alternate;
+}
+@keyframes gemshine { from { box-shadow: 0 0 12px rgba(0,212,255,0.15), inset 0 1px 0 rgba(0,212,255,0.15); } to { box-shadow: 0 0 28px rgba(0,212,255,0.3), inset 0 1px 0 rgba(0,212,255,0.3); } }
+.logo-gem span { font-family: var(--exo); font-weight: 900; font-size: 12px; color: var(--cyan); letter-spacing: 1px; }
+.logo-name { font-family: var(--exo); font-weight: 800; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; }
+.logo-name em { color: var(--cyan); font-style: normal; }
+.logo-tag { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 1px; }
+.hdr-right { display: flex; align-items: center; gap: 14px; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.85)} }
+.sys-time { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 2px; }
+.ver { font-family: var(--mono); font-size: 9px; color: var(--cyan); background: rgba(0,212,255,.07); border: 1px solid rgba(0,212,255,.2); padding: 3px 8px; border-radius: 3px; letter-spacing: 2px; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center; padding: 72px 24px 48px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: 'AB³';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-60%);
+  font-family: var(--exo); font-weight: 900; font-size: 220px;
+  color: rgba(0,212,255,.022); pointer-events: none; user-select: none;
+  letter-spacing: .05em; white-space: nowrap;
+}
+.eyebrow {
+  font-family: var(--mono); font-size: 9px; color: var(--cyan);
+  letter-spacing: 6px; text-transform: uppercase; margin-bottom: 16px;
+  opacity: .7; animation: fadein .6s ease both;
+}
+.hero-title {
+  font-family: var(--exo); font-weight: 900; font-size: clamp(32px, 6vw, 56px);
+  letter-spacing: .04em; text-transform: uppercase; line-height: 1.05;
+  background: linear-gradient(135deg, #E8F4FF 20%, #00D4FF 55%, #0055CC 90%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 14px;
+  animation: fadein .6s .1s ease both;
+}
+.hero-sub {
+  font-family: var(--exo); font-weight: 300; font-size: clamp(11px, 1.8vw, 14px);
+  color: rgba(232,244,255,.45); letter-spacing: .12em; text-transform: uppercase;
+  max-width: 560px; margin: 0 auto 10px; line-height: 1.8;
+  animation: fadein .6s .2s ease both;
+}
+.hero-cred {
+  font-family: var(--mono); font-size: 9px; color: var(--cyan);
+  letter-spacing: 2px; opacity: .55;
+  animation: fadein .6s .3s ease both;
+}
+@keyframes fadein { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 16px;
+  max-width: 900px; margin: 0 auto 36px; padding: 0 24px;
+  animation: fadein .5s .35s ease both;
+}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,212,255,.25), transparent); }
+.divider-label { font-family: var(--mono); font-size: 9px; color: var(--cyan); letter-spacing: 4px; text-transform: uppercase; white-space: nowrap; opacity: .6; }
+
+/* ── APP GRID ── */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* ── APP BUTTON ── */
+.app-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 28px 16px 22px;
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  text-decoration: none; color: var(--white);
+  position: relative; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  cursor: pointer;
+  animation: fadein .5s ease both;
+}
+.app-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,212,255,.05) 0%, transparent 60%);
+  border-radius: inherit; pointer-events: none;
+  transition: opacity .25s;
+}
+.app-btn::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0; transition: opacity .25s;
+  border-radius: 12px 12px 0 0;
+}
+.app-btn:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0,212,255,.35);
+  box-shadow: 0 12px 40px rgba(0,212,255,.12), 0 0 0 1px rgba(0,212,255,.15);
+}
+.app-btn:hover::before { opacity: 2; }
+.app-btn:hover::after { opacity: 1; }
+.app-btn:hover .app-icon { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(0,212,255,.5)); }
+.app-btn:hover .app-label { color: var(--cyan); }
+
+/* Stagger animation delays */
+.app-btn:nth-child(1) { animation-delay: .1s; }
+.app-btn:nth-child(2) { animation-delay: .15s; }
+.app-btn:nth-child(3) { animation-delay: .2s; }
+.app-btn:nth-child(4) { animation-delay: .25s; }
+.app-btn:nth-child(5) { animation-delay: .3s; }
+.app-btn:nth-child(6) { animation-delay: .35s; }
+.app-btn:nth-child(7) { animation-delay: .4s; }
+.app-btn:nth-child(8) { animation-delay: .45s; }
+
+.app-icon {
+  font-size: 32px; line-height: 1;
+  transition: transform .25s ease, filter .25s ease;
+}
+.app-label {
+  font-family: var(--exo); font-weight: 700; font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--white);
+  text-align: center; transition: color .2s; line-height: 1.3;
+}
+.app-desc {
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  text-align: center; letter-spacing: .05em; line-height: 1.5;
+}
+.app-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 8px; letter-spacing: 2px;
+  padding: 3px 8px; border-radius: 3px; text-transform: uppercase;
+  margin-top: 4px;
+}
+.status-live { background: rgba(0,255,179,.07); color: var(--green); border: 1px solid rgba(0,255,179,.2); }
+.status-wip  { background: rgba(255,176,32,.07); color: var(--amber); border: 1px solid rgba(255,176,32,.2); }
+.status-new  { background: rgba(0,212,255,.07); color: var(--cyan); border: 1px solid rgba(0,212,255,.2); }
+
+/* ── STATS BAR ── */
+.stats {
+  background: rgba(2,8,16,.88);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--bd);
+  display: flex; justify-content: space-around;
+  padding: 14px 28px; flex-wrap: wrap; gap: 8px;
+  margin-top: auto;
+}
+.stat { text-align: center; }
+.stat-num { font-family: var(--exo); font-weight: 900; font-size: 20px; color: var(--cyan); text-shadow: 0 0 12px rgba(0,212,255,.3); letter-spacing: 1px; }
+.stat-lbl { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 16px 24px;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  letter-spacing: 2px; background: rgba(2,8,16,.7);
+  border-top: 1px solid var(--bd2);
+}
+footer a { color: var(--cyan); text-decoration: none; opacity: .7; }
+footer a:hover { opacity: 1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .app-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 14px 48px; }
+  header { padding: 0 16px; }
+  .hero { padding: 48px 16px 32px; }
+  .hdr-right .sys-time { display: none; }
+}
+@media (max-width: 380px) {
+  .app-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <header>
+    <div style="display:flex;align-items:center">
+      <div class="logo-gem"><span>AB³</span></div>
+      <div>
+        <div class="logo-name">AI Base<em>³</em> Solutions</div>
+        <div class="logo-tag">Electrical Intelligence · St. Louis, MO</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="live-dot"></div>
+      <span class="sys-time" id="clock"></span>
+      <span class="ver">v3.0</span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">AI Base³ Solutions · Platform Hub</div>
+    <h1 class="hero-title">Industrial AI<br>Command Center</h1>
+    <p class="hero-sub">Electrical Signature Analysis · Predictive Maintenance · Motor Intelligence</p>
+    <p class="hero-cred">EBMI Credentialed Electrical Professional · MO & IL · 27,000+ Field Hours</p>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-label">Applications & Tools</div>
+  </div>
+
+  <!-- APP GRID -->
+  <div class="app-grid">
+
+    <a class="app-btn" href="https://aibase3.com/nexus" target="_blank" rel="noopener">
+      <div class="app-icon">⚡</div>
+      <div class="app-label">NEXUS ESA Platform</div>
+      <div class="app-desc">Full ESA engine · FFT · Fault classifiers · Power quality · Fleet intel</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/esa-engine" target="_blank" rel="noopener">
+      <div class="app-icon">🔬</div>
+      <div class="app-label">ESA Diagnostic Engine</div>
+      <div class="app-desc">65536-pt FFT · Bearing geometry · IEEE 1068 · Motor Intelligence Reports</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/power-quality" target="_blank" rel="noopener">
+      <div class="app-icon">〰️</div>
+      <div class="app-label">Power Quality Analyzer</div>
+      <div class="app-desc">THD · Harmonics H1–H11 · 3-Phase waveform · IEEE 519 compliance</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/fleet" target="_blank" rel="noopener">
+      <div class="app-icon">🏭</div>
+      <div class="app-label">Fleet Intelligence</div>
+      <div class="app-desc">MCC lineup monitor · Asset health · Trend history · Work orders</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/dashboard" target="_blank" rel="noopener">
+      <div class="app-icon">📊</div>
+      <div class="app-label">Client Dashboard</div>
+      <div class="app-desc">Real-time motor health · Alert log · Brain Access Fee reports</div>
+      <div class="app-status status-new">★ New</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/reports" target="_blank" rel="noopener">
+      <div class="app-icon">📋</div>
+      <div class="app-label">Intelligence Reports</div>
+      <div class="app-desc">Motor Intelligence Reports · Work orders · Client deliverables</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://aibase3.com/revenue" target="_blank" rel="noopener">
+      <div class="app-icon">💰</div>
+      <div class="app-label">Brain Access Fee Calc</div>
+      <div class="app-desc">MRR / ARR modeling · Per-point pricing · Live revenue projection</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+    <a class="app-btn" href="https://ai-base-3.durable.site" target="_blank" rel="noopener">
+      <div class="app-icon">🌐</div>
+      <div class="app-label">Main Website</div>
+      <div class="app-desc">AI Base³ Solutions · Services · Contact · About Anthony McGee</div>
+      <div class="app-status status-live">● Live</div>
+    </a>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">27K+</div><div class="stat-lbl">Field Hours</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Fault Classes</div></div>
+    <div class="stat"><div class="stat-num">65536</div><div class="stat-lbl">FFT Points</div></div>
+    <div class="stat"><div class="stat-num">$147K</div><div class="stat-lbl">Target ARR</div></div>
+    <div class="stat"><div class="stat-num">MO·IL</div><div class="stat-lbl">EBMI Licensed</div></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    AI Base³ Solutions · Anthony McGee · EBMI Credentialed Electrical Professional, MO & IL ·
+    <a href="mailto:digital.exploits@gmail.com">digital.exploits@gmail.com</a> ·
+    <a href="https://ai-base-3.durable.site" target="_blank">ai-base-3.durable.site</a>
+  </footer>
+
+</div>
+
+<script>
+// Clock
+setInterval(() => {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('en-US', { hour12: false });
+}, 1000);
+
+// Particle engine
+(function() {
+  const c = document.getElementById('bg');
+  const ctx = c.getContext('2d');
+  let W, H, pts = [];
+  function resize() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for (let i = 0; i < 70; i++) pts.push({
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
+    r: Math.random() * 1.2 + .3, a: Math.random() * .35 + .08
+  });
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,180,255,${p.a})`; ctx.fill();
+    });
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 110) {
+          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = `rgba(0,180,255,${.035 * (1 - d / 110)})`; ctx.lineWidth = .5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
