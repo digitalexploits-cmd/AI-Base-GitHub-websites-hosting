@@ -1,14 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=./Index.html">
-  <link rel="canonical" href="./Index.html">
-  <title>AI Base³ Solutions</title>
-  <script>window.location.replace('./Index.html');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Platform | AI Base³</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0A0F1A;
+  --navy-mid: #0D1525;
+  --navy-card: #111827;
+  --navy-b: #1E2D45;
+  --cyan: #00D4FF;
+  --cyan-dim: #00A8CC;
+  --green: #00FF88;
+  --amber: #FFB020;
+  --white: #E8F4FF;
+  --muted: #4A6480;
+  --mono: 'Share Tech Mono', monospace;
+  --disp: 'Barlow Condensed', sans-serif;
+  --body: 'Barlow', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--navy); color: var(--white); font-family: var(--body); font-size: 14px; min-height: 100vh; }
+.hdr { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--navy-b); background: rgba(10,15,26,0.97); position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px); }
+.logo-box { width: 38px; height: 38px; border: 2px solid var(--cyan); display: flex; align-items: center; justify-content: center; margin-right: 12px; }
+.logo-text { font-family: var(--disp); font-weight: 900; font-size: 20px; letter-spacing: 0.08em; color: var(--cyan); text-transform: uppercase; }
+.logo-text em { color: var(--white); font-style: normal; }
+.main { max-width: 1280px; margin: 0 auto; padding: 40px 24px; }
+.hero { text-align: center; margin-bottom: 48px; }
+.hero h1 { font-family: var(--disp); font-size: 42px; font-weight: 900; letter-spacing: 0.06em; margin-bottom: 12px; }
+.hero p { color: var(--muted); font-size: 16px; max-width: 620px; margin: 0 auto; }
+.section-title { font-family: var(--disp); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--navy-b), transparent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.card { background: var(--navy-card); border: 1px solid var(--navy-b); border-radius: 6px; padding: 20px; transition: all .2s; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.card:hover { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.08); }
+.card h3 { font-family: var(--disp); font-weight: 700; font-size: 16px; margin-bottom: 8px; color: var(--cyan); }
+.card p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.status-bar { margin-top: 60px; padding: 16px 24px; background: var(--navy-mid); border: 1px solid var(--navy-b); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.status-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 8px var(--green); }
+</style>
 </head>
 <body>
-  <p><a href="./Index.html">Open AI Base³ Solutions</a></p>
+
+<header class="hdr">
+  <div style="display:flex; align-items:center;">
+    <div class="logo-box"><span>AI</span></div>
+    <div>
+      <div class="logo-text">AI BASE³ <em>NEXUS</em></div>
+      <div style="font-size:9px; color:var(--muted); letter-spacing:2px; margin-top:-2px;">PLATFORM</div>
+    </div>
+  </div>
+  <div style="font-family:var(--mono); font-size:11px; color:var(--muted);">SINE~WaiV Powered • Edge Intelligence</div>
+</header>
+
+<div class="main">
+
+  <div class="hero">
+    <h1>NEXUS Platform</h1>
+    <p>Predictive maintenance intelligence for legacy industrial assets.<br>
+    Signal analysis • Fault detection • Decision support • Work orchestration</p>
+  </div>
+
+  <div class="section-title">PLATFORM MODULES</div>
+  
+  <div class="grid">
+
+    <!-- ESA Engine -->
+    <a href="aibase3_esa_engine_v3_1.html" class="card" target="_blank">
+      <h3>ESA Engine v3</h3>
+      <p>Electrical Signature Analysis • FFT visualization • Real-time motor health diagnostics and fault classification.</p>
+    </a>
+
+    <!-- NEXUS Main -->
+    <a href="aibase3_nexus.html" class="card" target="_blank">
+      <h3>NEXUS Main Dashboard</h3>
+      <p>Central command view of the full platform — asset overview, telemetry, and system status.</p>
+    </a>
+
+    <!-- Motor Intelligence Report -->
+    <a href="motor_intelligence_report.html" class="card" target="_blank">
+      <h3>Motor Intelligence Report</h3>
+      <p>Automated diagnostic reports with fault signatures, severity scoring, and recommended actions.</p>
+    </a>
+
+    <!-- Launcher -->
+    <a href="aibase3_launcher.html" class="card" target="_blank">
+      <h3>Platform Launcher</h3>
+      <p>Quick-access hub for all NEXUS tools and workflows.</p>
+    </a>
+
+    <!-- Executive Dossier -->
+    <a href="Anthony_McGee_AI_Base3_Master_Executive_Portfolio.html" class="card" target="_blank">
+      <h3>Executive Dossier</h3>
+      <p>Founder & platform overview — capabilities, validation, and strategic positioning.</p>
+    </a>
+
+    <!-- Value Presentation -->
+    <a href="sinewaiv_value_presentation.html" class="card" target="_blank">
+      <h3>SINE~WaiV Value Presentation</h3>
+      <p>High-level value proposition and technical differentiation overview.</p>
+    </a>
+
+  </div>
+
+  <div class="status-bar">
+    <div>
+      <span class="status-dot"></span>
+      <strong>Status:</strong> Prototype Assembly • All core modules connected
+    </div>
+    <div style="color:var(--muted);">v0.9 • July 2026 • AI Base³ Solutions</div>
+  </div>
+
+</div>
+
 </body>
 </html>
