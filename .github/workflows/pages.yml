@@ -4,7 +4,12 @@ on:
   push:
     branches: [trunk]
     paths:
-      - '*.html'
+      - 'index.html'
+      - 'aibase3_nexus.html'
+      - 'aibase3_esa_engine_v3_1.html'
+      - 'motor_intelligence_report.html'
+      - '1728_Sentry.html'
+      - 'dossier.html'
       - 'premium-preview/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -33,14 +38,33 @@ jobs:
 
       - name: Prepare public demo artifact
         run: |
+          set -euo pipefail
           mkdir -p _site
-          find . -maxdepth 1 -type f -name '*.html' -exec cp {} _site/ \;
+
+          public_files=(
+            index.html
+            aibase3_nexus.html
+            aibase3_esa_engine_v3_1.html
+            motor_intelligence_report.html
+            1728_Sentry.html
+          )
+
+          for file in "${public_files[@]}"; do
+            test -s "$file"
+            cp "$file" _site/
+          done
+
+          if [ -s dossier.html ]; then
+            cp dossier.html _site/
+          fi
+
           if [ -d premium-preview ]; then
             mkdir -p _site/premium-preview
             cp -R premium-preview/. _site/premium-preview/
           fi
+
           touch _site/.nojekyll
-          test -f _site/index.html
+          test -s _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
