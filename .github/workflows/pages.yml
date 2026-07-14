@@ -1,9 +1,10 @@
-name: Deploy premium preview to GitHub Pages
+name: Deploy integrated Nexus demo to GitHub Pages
 
 on:
   push:
     branches: [trunk]
     paths:
+      - '*.html'
       - 'premium-preview/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -30,24 +31,16 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare isolated site artifact
+      - name: Prepare public demo artifact
         run: |
-          mkdir -p _site/premium-preview
-          cp -R premium-preview/. _site/premium-preview/
-          cat > _site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width,initial-scale=1">
-            <meta http-equiv="refresh" content="0; url=./premium-preview/">
-            <title>AI Base³ Nexus Preview</title>
-          </head>
-          <body>
-            <p><a href="./premium-preview/">Open the AI Base³ Nexus premium preview</a></p>
-          </body>
-          </html>
-          HTML
+          mkdir -p _site
+          find . -maxdepth 1 -type f -name '*.html' -exec cp {} _site/ \;
+          if [ -d premium-preview ]; then
+            mkdir -p _site/premium-preview
+            cp -R premium-preview/. _site/premium-preview/
+          fi
+          touch _site/.nojekyll
+          test -f _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
